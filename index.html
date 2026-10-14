@@ -15,24 +15,24 @@
             theme: {
                 extend: {
                     colors: {
-                        cream: '#FAF7F5',
+                        cream: '#FFF5F7',
                         'cream-card': '#FFFFFF',
-                        'gold-accent': '#C5A059',
-                        'gold-hover': '#B38E46',
-                        'gold-light': '#F8F4EC',
-                        'rose-nude': '#E8D8D0',
-                        'rose-soft': '#F5ECE7',
-                        'charcoal-main': '#2B2625',
-                        'charcoal-muted': '#8C827A',
-                        'border-soft': '#F0EAE1',
+                        'gold-accent': '#D46A88',
+                        'gold-hover': '#C25674',
+                        'gold-light': '#FCE8EE',
+                        'rose-nude': '#F5D6DF',
+                        'rose-soft': '#FBE4EC',
+                        'charcoal-main': '#2E2528',
+                        'charcoal-muted': '#8C787E',
+                        'border-soft': '#F0D6DE',
                     },
                     fontFamily: {
                         serif: ['"Cormorant Garamond"', 'serif'],
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     boxShadow: {
-                        'atelier': '0 12px 35px -10px rgba(180, 160, 150, 0.15)',
-                        'atelier-sm': '0 4px 15px rgba(180, 160, 150, 0.08)',
+                        'atelier': '0 12px 35px -10px rgba(212, 106, 136, 0.15)',
+                        'atelier-sm': '0 4px 15px rgba(212, 106, 136, 0.08)',
                         'atelier-inner': 'inset 0 2px 4px rgba(0,0,0,0.03)'
                     }
                 }
@@ -54,17 +54,17 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #FAF7F5;
+            background: #FFF5F7;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #E8D8D0;
+            background: #F5D6DF;
             border-radius: 4px;
         }
 
         .tab-active {
-            color: #C5A059;
-            border-top: 2px solid #C5A059;
+            color: #D46A88;
+            border-top: 2px solid #D46A88;
         }
 
         .fade-in {
@@ -82,6 +82,36 @@
                 transform: translateY(0);
             }
         }
+
+        @keyframes ringShake {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            20% {
+                transform: rotate(-10deg);
+            }
+
+            40% {
+                transform: rotate(10deg);
+            }
+
+            60% {
+                transform: rotate(-10deg);
+            }
+
+            80% {
+                transform: rotate(10deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        .alarm-ringing-animation {
+            animation: ringShake 0.5s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-cream font-sans text-charcoal-main antialiased min-h-screen flex justify-center selection:bg-rose-nude selection:text-charcoal-main">
@@ -96,7 +126,7 @@
                 <h1 class="font-serif text-2xl font-semibold tracking-tight text-charcoal-main">Shena's Study Planner</h1>
             </div>
             <div class="flex items-center space-x-2">
-                <button id="notification-btn" onclick="requestNotificationPermission()" class="p-2 rounded-full bg-rose-soft text-charcoal-muted hover:text-gold-accent transition-all duration-200" title="Enable Reminder Notifications">
+                <button id="notification-btn" onclick="requestNotificationAndAudioPermission()" class="p-2 rounded-full bg-rose-soft text-charcoal-muted hover:text-gold-accent transition-all duration-200" title="Enable Alarms & Notifications">
                     <svg id="bell-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
@@ -343,6 +373,21 @@
             </div>
         </nav>
 
+        <!-- ALARM RINGING FULLSCREEN MODAL (Phone Alarm Style) -->
+        <div id="alarm-ringing-modal" class="fixed inset-0 bg-charcoal-main/90 backdrop-blur-md z-50 flex items-center justify-center px-4 hidden">
+            <div class="bg-cream-card w-full max-w-[360px] rounded-3xl p-8 shadow-2xl space-y-6 text-center fade-in border border-border-soft">
+                <div class="w-20 h-20 bg-gold-light rounded-full mx-auto flex items-center justify-center text-4xl text-gold-accent alarm-ringing-animation shadow-lg">⏰</div>
+                <div class="space-y-2">
+                    <p class="text-xs uppercase tracking-[0.2em] font-bold text-gold-accent">Study Alarm Ringing</p>
+                    <h3 id="alarm-subject-name" class="font-serif text-2xl font-bold text-charcoal-main">Macroeconomics</h3>
+                    <p class="text-xs text-charcoal-muted">Time for your scheduled study block. Wake up and focus!</p>
+                </div>
+                <button onclick="dismissAlarmRinging()" class="w-full bg-gold-accent hover:bg-gold-hover text-white py-4 rounded-2xl font-semibold text-xs tracking-widest uppercase transition-all shadow-atelier">
+                    Dismiss & Start Session
+                </button>
+            </div>
+        </div>
+
         <!-- HEALTH BREAK PROMPT MODAL -->
         <div id="break-modal" class="fixed inset-0 bg-charcoal-main/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
             <div class="bg-cream-card w-full max-w-[360px] rounded-3xl p-6 shadow-2xl space-y-4 text-center fade-in border border-border-soft">
@@ -431,9 +476,9 @@
                     <div>
                         <label class="block font-medium text-charcoal-muted mb-1">Theme Accent Color</label>
                         <div class="flex space-x-2 pt-1">
-                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#C5A059" checked class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#C5A059] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
-                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#D8A48F" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#D8A48F] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
-                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#9EB29D" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#9EB29D] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#D46A88" checked class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#D46A88] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#E598A8" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#E598A8] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#A8C5B2" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#A8C5B2] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
                             <label class="cursor-pointer"><input type="radio" name="subject-color" value="#A2B5C8" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#A2B5C8] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
                         </div>
                     </div>
@@ -452,8 +497,8 @@
 
         let appState = {
             subjects: [
-                { id: 'sub_1', title: 'Macroeconomics', color: '#C5A059', tasks: [{ id: 't1', text: 'Review Chapter 4 Inflation Models', done: false }, { id: 't2', text: 'Active Recall: Fiscal Multiplier', done: true }] },
-                { id: 'sub_2', title: 'Biochemistry', color: '#D8A48F', tasks: [{ id: 't1', text: 'Memorize Krebs Cycle Enzymes', done: false }] }
+                { id: 'sub_1', title: 'Macroeconomics', color: '#D46A88', tasks: [{ id: 't1', text: 'Review Chapter 4 Inflation Models', done: false }, { id: 't2', text: 'Active Recall: Fiscal Multiplier', done: true }] },
+                { id: 'sub_2', title: 'Biochemistry', color: '#E598A8', tasks: [{ id: 't1', text: 'Memorize Krebs Cycle Enzymes', done: false }] }
             ],
             sessions: [
                 { id: 'ses_1', subjectId: 'sub_1', date: new Date().toISOString().split('T')[0], time: '18:00', duration: 30, priority: 'High', status: 'scheduled', remainingSeconds: 30 * 60, reminded: false }
@@ -476,6 +521,11 @@
         let activeTimerMode = 'study'; // 'study' or 'break'
         let currentTimerSessionId = null;
         let currentHistoryFilter = 'inprogress';
+
+        // Alarm Ringing Loop Variables
+        let alarmRingingInterval = null;
+        let currentRingingSessionId = null;
+        let globalAudioCtx = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             loadStateFromStorage();
@@ -560,44 +610,44 @@
 
             if (scheduledSessions.length === 0) {
                 container.innerHTML = `
-                        <div class="text-center py-10 bg-cream-card rounded-2xl border border-border-soft">
-                            <p class="text-xs text-charcoal-muted">No upcoming scheduled study blocks.</p>
-                            <button onclick="openModal('add-session-modal')" class="mt-3 text-gold-accent text-xs font-semibold underline">Plan your next session</button>
-                        </div>
-                    `;
+                            <div class="text-center py-10 bg-cream-card rounded-2xl border border-border-soft">
+                                <p class="text-xs text-charcoal-muted">No upcoming scheduled study blocks.</p>
+                                <button onclick="openModal('add-session-modal')" class="mt-3 text-gold-accent text-xs font-semibold underline">Plan your next session</button>
+                            </div>
+                        `;
                 return;
             }
 
             scheduledSessions.forEach(ses => {
-                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: '#C5A059' };
+                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: '#D46A88' };
                 const isToday = ses.date === new Date().toISOString().split('T')[0];
                 const dateLabel = isToday ? 'Today' : ses.date;
 
                 const item = document.createElement('div');
                 item.className = 'bg-cream-card p-4 rounded-2xl border border-border-soft shadow-atelier-sm flex items-center justify-between transition-all';
                 item.innerHTML = `
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
-                            <div>
-                                <h4 class="font-serif text-base font-semibold text-charcoal-main">${sub.title}</h4>
-                                <div class="flex items-center space-x-2 text-[11px] text-charcoal-muted mt-0.5">
-                                    <span>📅 ${dateLabel} at ${ses.time}</span>
-                                    <span>•</span>
-                                    <span>⏳ ${ses.duration}m</span>
-                                    <span>•</span>
-                                    <span class="px-1.5 py-0.5 rounded-md bg-rose-soft text-charcoal-main font-medium">${ses.priority}</span>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
+                                <div>
+                                    <h4 class="font-serif text-base font-semibold text-charcoal-main">${sub.title}</h4>
+                                    <div class="flex items-center space-x-2 text-[11px] text-charcoal-muted mt-0.5">
+                                        <span>📅 ${dateLabel} at ${ses.time}</span>
+                                        <span>•</span>
+                                        <span>⏳ ${ses.duration}m</span>
+                                        <span>•</span>
+                                        <span class="px-1.5 py-0.5 rounded-md bg-rose-soft text-charcoal-main font-medium">${ses.priority}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-charcoal-main text-white rounded-xl text-xs font-medium hover:bg-gold-accent transition-all shadow-atelier-sm">
-                                Start
-                            </button>
-                            <button onclick="deleteSession('${ses.id}')" class="p-1.5 text-charcoal-muted hover:text-red-500 transition-all text-sm">
-                                ✕
-                            </button>
-                        </div>
-                    `;
+                            <div class="flex items-center space-x-2">
+                                <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-charcoal-main text-white rounded-xl text-xs font-medium hover:bg-gold-accent transition-all shadow-atelier-sm">
+                                    Start
+                                </button>
+                                <button onclick="deleteSession('${ses.id}')" class="p-1.5 text-charcoal-muted hover:text-red-500 transition-all text-sm">
+                                    ✕
+                                </button>
+                            </div>
+                        `;
                 container.appendChild(item);
             });
         }
@@ -618,31 +668,31 @@
                 let tasksHtml = '';
                 sub.tasks.forEach(task => {
                     tasksHtml += `
-                            <div class="flex items-center justify-between py-1.5 border-b border-border-soft/60 last:border-0">
-                                <label class="flex items-center space-x-2.5 cursor-pointer flex-1">
-                                    <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone('${sub.id}', '${task.id}')" class="rounded border-border-soft text-gold-accent focus:ring-0 w-4 h-4 cursor-pointer">
-                                    <span class="text-xs ${task.done ? 'line-through text-charcoal-muted' : 'text-charcoal-main'}">${task.text}</span>
-                                </label>
-                                <button onclick="deleteTask('${sub.id}', '${task.id}')" class="text-[10px] text-charcoal-muted hover:text-red-500 px-1">✕</button>
-                            </div>
-                        `;
+                                <div class="flex items-center justify-between py-1.5 border-b border-border-soft/60 last:border-0">
+                                    <label class="flex items-center space-x-2.5 cursor-pointer flex-1">
+                                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone('${sub.id}', '${task.id}')" class="rounded border-border-soft text-gold-accent focus:ring-0 w-4 h-4 cursor-pointer">
+                                        <span class="text-xs ${task.done ? 'line-through text-charcoal-muted' : 'text-charcoal-main'}">${task.text}</span>
+                                    </label>
+                                    <button onclick="deleteTask('${sub.id}', '${task.id}')" class="text-[10px] text-charcoal-muted hover:text-red-500 px-1">✕</button>
+                                </div>
+                            `;
                 });
 
                 card.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <span class="w-3 h-3 rounded-full" style="background-color: ${sub.color}"></span>
-                                <h3 class="font-serif font-semibold text-base text-charcoal-main">${sub.title}</h3>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-3 h-3 rounded-full" style="background-color: ${sub.color}"></span>
+                                    <h3 class="font-serif font-semibold text-base text-charcoal-main">${sub.title}</h3>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="promptAddTask('${sub.id}')" class="text-[11px] text-gold-accent font-medium hover:underline">+ Add Task</button>
+                                    <button onclick="deleteSubject('${sub.id}')" class="text-charcoal-muted hover:text-red-500 text-xs">✕</button>
+                                </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="promptAddTask('${sub.id}')" class="text-[11px] text-gold-accent font-medium hover:underline">+ Add Task</button>
-                                <button onclick="deleteSubject('${sub.id}')" class="text-charcoal-muted hover:text-red-500 text-xs">✕</button>
+                            <div class="bg-cream rounded-xl p-3 space-y-1">
+                                ${tasksHtml || '<p class="text-[11px] text-charcoal-muted text-center py-1">No active recall tasks added yet.</p>'}
                             </div>
-                        </div>
-                        <div class="bg-cream rounded-xl p-3 space-y-1">
-                            ${tasksHtml || '<p class="text-[11px] text-charcoal-muted text-center py-1">No active recall tasks added yet.</p>'}
-                        </div>
-                    `;
+                        `;
                 container.appendChild(card);
             });
         }
@@ -720,37 +770,37 @@
 
             if (filteredSessions.length === 0) {
                 container.innerHTML = `
-                        <div class="text-center py-10 bg-cream-card rounded-2xl border border-border-soft">
-                            <p class="text-xs text-charcoal-muted">No sessions found in "${currentHistoryFilter.toUpperCase()}" status.</p>
-                        </div>
-                    `;
+                            <div class="text-center py-10 bg-cream-card rounded-2xl border border-border-soft">
+                                <p class="text-xs text-charcoal-muted">No sessions found in "${currentHistoryFilter.toUpperCase()}" status.</p>
+                            </div>
+                        `;
                 return;
             }
 
             filteredSessions.forEach(ses => {
-                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: '#C5A059' };
+                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: '#D46A88' };
                 const remainingMins = Math.ceil((ses.remainingSeconds || (ses.duration * 60)) / 60);
 
                 const item = document.createElement('div');
                 item.className = 'bg-cream-card p-4 rounded-2xl border border-border-soft shadow-atelier-sm flex items-center justify-between transition-all';
                 item.innerHTML = `
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
-                            <div>
-                                <h4 class="font-serif text-base font-semibold text-charcoal-main">${sub.title}</h4>
-                                <div class="flex items-center space-x-2 text-[11px] text-charcoal-muted mt-0.5">
-                                    <span class="uppercase tracking-wide font-medium text-gold-accent">[${ses.status}]</span>
-                                    <span>•</span>
-                                    <span>Remaining: ${remainingMins}m</span>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
+                                <div>
+                                    <h4 class="font-serif text-base font-semibold text-charcoal-main">${sub.title}</h4>
+                                    <div class="flex items-center space-x-2 text-[11px] text-charcoal-muted mt-0.5">
+                                        <span class="uppercase tracking-wide font-medium text-gold-accent">[${ses.status}]</span>
+                                        <span>•</span>
+                                        <span>Remaining: ${remainingMins}m</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-charcoal-main text-white rounded-xl text-xs font-medium hover:bg-gold-accent transition-all shadow-atelier-sm">
-                                Resume
-                            </button>
-                        </div>
-                    `;
+                            <div class="flex items-center space-x-2">
+                                <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-charcoal-main text-white rounded-xl text-xs font-medium hover:bg-gold-accent transition-all shadow-atelier-sm">
+                                    Resume
+                                </button>
+                            </div>
+                        `;
                 container.appendChild(item);
             });
         }
@@ -815,7 +865,7 @@
             e.preventDefault();
             const title = document.getElementById('subject-title-input').value.trim();
             const colorRadios = document.getElementsByName('subject-color');
-            let color = '#C5A059';
+            let color = '#D46A88';
             for (const r of colorRadios) {
                 if (r.checked) color = r.value;
             }
@@ -1030,19 +1080,33 @@
             dismissBreakModal();
         }
 
-        /* ALARMS & NOTIFICATIONS */
-        function requestNotificationPermission() {
+        /* ALARMS & NOTIFICATIONS (Android & iOS Alarm Clock Style) */
+        function requestNotificationAndAudioPermission() {
+            // Unlock Mobile Browser Audio Context via User Gesture
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    globalAudioCtx = new AudioContext();
+                    if (globalAudioCtx.state === 'suspended') {
+                        globalAudioCtx.resume();
+                    }
+                }
+            } catch (e) {
+                console.log("Audio unlock exception", e);
+            }
+
+            // Request Notification Permission for Phone/OS
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        showToast("Notifications enabled successfully!");
-                        document.getElementById('bell-icon').style.color = '#C5A059';
+                        showToast("Notifications & Alarm Clock Permissions Enabled!");
+                        document.getElementById('bell-icon').style.color = '#D46A88';
                     } else {
-                        showToast("Notification permission denied.");
+                        showToast("Notification permission denied, but in-app alarm clock is active.");
                     }
                 });
             } else {
-                showToast("Notifications not supported on this browser.");
+                showToast("Alarm clock initialized and ready.");
             }
         }
 
@@ -1053,19 +1117,52 @@
 
         function playAudioAlarm() {
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = globalAudioCtx || new AudioContext();
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(659.25, ctx.currentTime);
-                gain.gain.setValueAtTime(0.25, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
+                osc.type = 'square'; // Piercing phone alarm sound
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                setTimeout(() => { if (osc) osc.frequency.setValueAtTime(659.25, ctx.currentTime); }, 250);
+
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 1.8);
+                osc.stop(ctx.currentTime + 1.2);
             } catch (e) {
                 console.log("AudioContext blocked or unavailable", e);
+            }
+        }
+
+        function startAlarmRingingSequence(sessionId, subName) {
+            currentRingingSessionId = sessionId;
+            document.getElementById('alarm-subject-name').innerText = subName;
+            document.getElementById('alarm-ringing-modal').classList.remove('hidden');
+
+            // Play initial beep and start a looping alarm ring every 1.8 seconds until dismissed
+            playAudioAlarm();
+            if (!alarmRingingInterval) {
+                alarmRingingInterval = setInterval(() => {
+                    playAudioAlarm();
+                }, 1800);
+            }
+        }
+
+        function dismissAlarmRinging() {
+            document.getElementById('alarm-ringing-modal').classList.add('hidden');
+            if (alarmRingingInterval) {
+                clearInterval(alarmRingingInterval);
+                alarmRingingInterval = null;
+            }
+            if (currentRingingSessionId) {
+                launchSessionTimer(currentRingingSessionId);
+                currentRingingSessionId = null;
             }
         }
 
@@ -1078,16 +1175,18 @@
                 if (ses.date === todayStr && ses.time === currentTimeStr && !ses.reminded && ses.status === 'scheduled') {
                     ses.reminded = true;
                     saveState();
-                    playAudioAlarm();
                     const sub = appState.subjects.find(s => s.id === ses.subjectId);
                     const subName = sub ? sub.title : 'Study Session';
 
+                    // Trigger Phone OS Push Notification if permitted
                     if ("Notification" in window && Notification.permission === "granted") {
-                        new Notification("Study Session Reminder", {
+                        new Notification("Study Alarm Ringing!", {
                             body: `Time for your scheduled study block: ${subName}!`
                         });
                     }
-                    showToast(`✨ Study Alarm: Time for ${subName}!`);
+
+                    // Trigger In-App Phone Alarm Clock Ringing Modal & Sound Loop
+                    startAlarmRingingSequence(ses.id, subName);
                 }
             });
         }
