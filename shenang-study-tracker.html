@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atelier Study Companion</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAF7F5',
+                        'cream-card': '#FFFFFF',
+                        'gold-accent': '#C5A059',
+                        'gold-hover': '#B38E46',
+                        'gold-light': '#F8F4EC',
+                        'rose-nude': '#E8D8D0',
+                        'rose-soft': '#F5ECE7',
+                        'charcoal-main': '#2B2625',
+                        'charcoal-muted': '#8C827A',
+                        'border-soft': '#F0EAE1',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'atelier': '0 12px 35px -10px rgba(180, 160, 150, 0.15)',
+                        'atelier-sm': '0 4px 15px rgba(180, 160, 150, 0.08)',
+                        'atelier-inner': 'inset 0 2px 4px rgba(0,0,0,0.03)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        input, textarea, select {
+            user-select: text;
+        }
+        /* Custom Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #FAF7F5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #E8D8D0;
+            border-radius: 4px;
+        }
+
+        .tab-active {
+            color: #C5A059;
+            border-top: 2px solid #C5A059;
+        }
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-cream font-sans text-charcoal-main antialiased min-h-screen flex justify-center selection:bg-rose-nude selection:text-charcoal-main">
+
+    <!-- Mobile Frame Shell -->
+    <div class="w-full max-w-[430px] min-h-screen bg-cream flex flex-col relative shadow-2xl border-x border-border-soft/60">
+
+        <!-- Header -->
+        <header class="pt-7 pb-4 px-6 bg-cream/90 backdrop-blur-md sticky top-0 z-30 border-b border-border-soft/80 flex items-center justify-between">
+            <div>
+                <p class="text-[10px] tracking-[0.2em] uppercase font-semibold text-gold-accent" id="header-date">TODAY</p>
+                <h1 class="font-serif text-2xl font-semibold tracking-tight text-charcoal-main">Shena's Study Planner'</h1>
+            </div>
+            <div class="flex items-center space-x-2">
+                <!-- Push Notification Permission Button -->
+                <button id="notification-btn" onclick="requestNotificationPermission()" class="p-2 rounded-full bg-rose-soft text-charcoal-muted hover:text-gold-accent transition-all duration-200" title="Enable Reminder Notifications">
+                    <svg id="bell-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                </button>
+                <button onclick="testAudioAlarm()" class="p-2 rounded-full bg-rose-soft text-charcoal-muted hover:text-gold-accent transition-all duration-200" title="Sound Check">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Toast / Notification Banner Container -->
+        <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-[390px] z-50 pointer-events-none space-y-2"></div>
+
+        <!-- Main Body / View Switcher -->
+        <main class="flex-1 px-5 pt-4 pb-24 overflow-y-auto" id="app-content">
+
+            <!-- TAB 1: SCHEDULE & PLANNER -->
+            <section id="tab-schedule" class="tab-content fade-in space-y-6">
+                <!-- Quote Banner -->
+                <div class="bg-gradient-to-r from-rose-soft via-gold-light to-rose-soft p-4 rounded-2xl border border-border-soft text-center shadow-atelier-sm">
+                    <p class="font-serif italic text-charcoal-main text-sm">"Grace in focus, precision in endeavor."</p>
+                </div>
+
+                <!-- Add Session Button & Trigger -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-serif text-xl font-semibold text-charcoal-main">Study Schedule</h2>
+                        <p class="text-xs text-charcoal-muted">Upcoming planned sessions</p>
+                    </div>
+                    <button onclick="openModal('add-session-modal')" class="bg-charcoal-main hover:bg-gold-accent text-white px-3.5 py-2 rounded-full text-xs font-medium tracking-wide flex items-center space-x-1.5 transition-all duration-300 shadow-atelier-sm">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span>Plan Session</span>
+                    </button>
+                </div>
+
+                <!-- Schedule List -->
+                <div id="schedule-list" class="space-y-3">
+                    <!-- Dynamic Items Injected Here -->
+                </div>
+            </section>
+
+            <!-- TAB 2: FOCUS TIMER & BREAKS -->
+            <section id="tab-timer" class="tab-content hidden fade-in space-y-6">
+                <!-- Timer Card -->
+                <div class="bg-cream-card rounded-3xl p-6 border border-border-soft shadow-atelier text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-nude via-gold-accent to-rose-nude"></div>
+
+                    <span id="timer-mode-badge" class="inline-block px-3 py-1 rounded-full text-[10px] uppercase font-semibold tracking-widest bg-gold-light text-gold-accent border border-gold-accent/20 mb-3">
+                        Deep Study Block
+                    </span>
+
+                    <h2 id="timer-subject-title" class="font-serif text-xl font-semibold text-charcoal-main truncate px-4">Standard Session</h2>
+
+                    <!-- Circular / Large Display -->
+                    <div class="my-6 py-4 flex flex-col items-center justify-center">
+                        <div class="font-serif text-6xl font-semibold text-charcoal-main tracking-tight font-mono" id="timer-display">
+                            25:00
+                        </div>
+                        <p class="text-xs text-charcoal-muted mt-2 font-medium" id="timer-subtext">Stay immersed in deep work</p>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="flex items-center justify-center space-x-3">
+                        <button id="timer-start-btn" onclick="toggleTimer()" class="bg-charcoal-main text-white px-7 py-3 rounded-full text-xs font-semibold tracking-wider uppercase hover:bg-gold-accent transition-all duration-300 shadow-atelier">
+                            Start Focus
+                        </button>
+                        <button onclick="resetTimer()" class="bg-rose-soft text-charcoal-main px-4 py-3 rounded-full text-xs font-semibold tracking-wider uppercase hover:bg-rose-nude transition-all duration-200">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Smart Break Assistant -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-serif text-lg font-semibold text-charcoal-main">Smart Break Rituals</h3>
+                        <span class="text-xs text-charcoal-muted">Choose your rest</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <button onclick="startBreakSession(5, 'Hydration & Stretch')" class="p-3 bg-cream-card rounded-2xl border border-border-soft text-center hover:border-gold-accent hover:shadow-atelier-sm transition-all duration-200">
+                            <span class="text-xl block mb-1">💧</span>
+                            <span class="text-xs font-semibold text-charcoal-main block">5 Mins</span>
+                            <span class="text-[10px] text-charcoal-muted block leading-tight">Hydration</span>
+                        </button>
+                        <button onclick="startBreakSession(15, 'Stretching & Fresh Air')" class="p-3 bg-cream-card rounded-2xl border border-border-soft text-center hover:border-gold-accent hover:shadow-atelier-sm transition-all duration-200">
+                            <span class="text-xl block mb-1">🌿</span>
+                            <span class="text-xs font-semibold text-charcoal-main block">15 Mins</span>
+                            <span class="text-[10px] text-charcoal-muted block leading-tight">Refresh Walk</span>
+                        </button>
+                        <button onclick="startBreakSession(20, 'Power Nap')" class="p-3 bg-cream-card rounded-2xl border border-border-soft text-center hover:border-gold-accent hover:shadow-atelier-sm transition-all duration-200">
+                            <span class="text-xl block mb-1">🌙</span>
+                            <span class="text-xs font-semibold text-charcoal-main block">20 Mins</span>
+                            <span class="text-[10px] text-charcoal-muted block leading-tight">Power Nap</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: SUBJECTS & ACTIVE RECALL -->
+            <section id="tab-subjects" class="tab-content hidden fade-in space-y-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-serif text-xl font-semibold text-charcoal-main">Subject Modules</h2>
+                        <p class="text-xs text-charcoal-muted">Sub-tasks & active recall checklists</p>
+                    </div>
+                    <button onclick="openModal('add-subject-modal')" class="bg-charcoal-main hover:bg-gold-accent text-white px-3.5 py-2 rounded-full text-xs font-medium tracking-wide flex items-center space-x-1.5 transition-all duration-300">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span>New Subject</span>
+                    </button>
+                </div>
+
+                <!-- Subject Accordion List -->
+                <div id="subject-list" class="space-y-3">
+                    <!-- Dynamic Subjects Dynamic JS -->
+                </div>
+            </section>
+
+            <!-- TAB 4: HABITS & WELLNESS -->
+            <section id="tab-habits" class="tab-content hidden fade-in space-y-6">
+                <div>
+                    <h2 class="font-serif text-xl font-semibold text-charcoal-main">Daily Balance</h2>
+                    <p class="text-xs text-charcoal-muted">Sustain your cognitive stamina</p>
+                </div>
+
+                <!-- Water Tracker Card -->
+                <div class="bg-cream-card rounded-3xl p-5 border border-border-soft shadow-atelier space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="p-2.5 bg-gold-light rounded-2xl text-gold-accent text-lg">💧</span>
+                            <div>
+                                <h3 class="text-sm font-semibold text-charcoal-main">Hydration Goal</h3>
+                                <p class="text-xs text-charcoal-muted"><span id="water-count">0</span> / 8 Glasses (2.0L)</p>
+                            </div>
+                        </div>
+                        <button onclick="addWaterGlass()" class="w-9 h-9 rounded-full bg-rose-soft hover:bg-gold-accent hover:text-white text-charcoal-main flex items-center justify-center font-semibold text-lg transition-all duration-200">
+                            +
+                        </button>
+                    </div>
+                    <!-- Water Progress Bubbles -->
+                    <div class="grid grid-cols-8 gap-1.5 pt-1" id="water-bubbles">
+                        <!-- Dynamic Bubbles -->
+                    </div>
+                </div>
+
+                <!-- Wellness Quick Check-Ins -->
+                <div class="space-y-3">
+                    <h3 class="font-serif text-lg font-semibold text-charcoal-main">Mind & Body Check-in</h3>
+                    <div class="grid grid-cols-2 gap-3" id="wellness-grid">
+                        <div onclick="toggleHabitItem('nap')" id="habit-nap" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl">💤</span>
+                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-charcoal-main">Power Nap</p>
+                                <p class="text-[10px] text-charcoal-muted">20m restorative rest</p>
+                            </div>
+                        </div>
+
+                        <div onclick="toggleHabitItem('stretch')" id="habit-stretch" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl">🧘‍♀️</span>
+                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-charcoal-main">Movement</p>
+                                <p class="text-[10px] text-charcoal-muted">Postural stretch</p>
+                            </div>
+                        </div>
+
+                        <div onclick="toggleHabitItem('walk')" id="habit-walk" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl">🌿</span>
+                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-charcoal-main">Fresh Air Walk</p>
+                                <p class="text-[10px] text-charcoal-muted">Outdoor step break</p>
+                            </div>
+                        </div>
+
+                        <div onclick="toggleHabitItem('reflection')" id="habit-reflection" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl">✨</span>
+                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-charcoal-main">Night Reflection</p>
+                                <p class="text-[10px] text-charcoal-muted">Acknowledge wins</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="fixed bottom-0 max-w-[430px] w-full bg-cream-card/95 backdrop-blur-md border-t border-border-soft z-40 px-3 py-2">
+            <div class="grid grid-cols-4 gap-1 text-center">
+                <button onclick="switchTab('schedule')" id="nav-schedule" class="py-1.5 flex flex-col items-center space-y-1 text-gold-accent tab-active">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span class="text-[10px] font-medium tracking-tight">Schedule</span>
+                </button>
+                <button onclick="switchTab('timer')" id="nav-timer" class="py-1.5 flex flex-col items-center space-y-1 text-charcoal-muted hover:text-gold-accent transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-[10px] font-medium tracking-tight">Timer</span>
+                </button>
+                <button onclick="switchTab('subjects')" id="nav-subjects" class="py-1.5 flex flex-col items-center space-y-1 text-charcoal-muted hover:text-gold-accent transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span class="text-[10px] font-medium tracking-tight">Subjects</span>
+                </button>
+                <button onclick="switchTab('habits')" id="nav-habits" class="py-1.5 flex flex-col items-center space-y-1 text-charcoal-muted hover:text-gold-accent transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    <span class="text-[10px] font-medium tracking-tight">Balance</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MODAL 1: ADD SESSION -->
+        <div id="add-session-modal" class="fixed inset-0 bg-charcoal-main/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="bg-cream-card w-full max-w-[430px] rounded-t-3xl p-6 border-t border-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b border-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold text-charcoal-main">Schedule Study Block</h3>
+                    <button onclick="closeModal('add-session-modal')" class="text-charcoal-muted hover:text-charcoal-main text-xl">✕</button>
+                </div>
+                <form id="session-form" onsubmit="handleSaveSession(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-medium text-charcoal-muted mb-1">Subject Name</label>
+                        <select id="session-subject-select" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                            <!-- Dynamic Subject options -->
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-medium text-charcoal-muted mb-1">Date</label>
+                            <input type="date" id="session-date" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-charcoal-muted mb-1">Start Time</label>
+                            <input type="time" id="session-time" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-medium text-charcoal-muted mb-1">Duration (Mins)</label>
+                            <input type="number" id="session-duration" min="5" max="300" value="45" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-charcoal-muted mb-1">Priority Level</label>
+                            <select id="session-priority" class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                                <option value="High">High Priority</option>
+                                <option value="Medium" selected>Medium Priority</option>
+                                <option value="Low">Low Priority</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gold-accent hover:bg-gold-hover text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-atelier-sm">
+                        Confirm Session
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL 2: ADD SUBJECT -->
+        <div id="add-subject-modal" class="fixed inset-0 bg-charcoal-main/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="bg-cream-card w-full max-w-[430px] rounded-t-3xl p-6 border-t border-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b border-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold text-charcoal-main">Add New Subject</h3>
+                    <button onclick="closeModal('add-subject-modal')" class="text-charcoal-muted hover:text-charcoal-main text-xl">✕</button>
+                </div>
+                <form onsubmit="handleSaveSubject(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-medium text-charcoal-muted mb-1">Subject Title</label>
+                        <input type="text" id="subject-title-input" placeholder="e.g. Organic Chemistry, Macroeconomics" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-charcoal-muted mb-1">Theme Accent Color</label>
+                        <div class="flex space-x-2 pt-1" id="color-picker-group">
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#C5A059" checked class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#C5A059] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#D8A48F" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#D8A48F] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#9EB29D" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#9EB29D] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#A2B5C8" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#A2B5C8] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-charcoal-main hover:bg-gold-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-atelier-sm">
+                        Create Module
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Application Script Logic -->
+    <script>
+        /* APP STATE STORAGE SETUP */
+        const STORAGE_KEY = 'ATELIER_STUDY_STATE_V1';
+
+        let appState = {
+            subjects: [
+                { id: 'sub_1', title: 'Macroeconomics', color: '#C5A059', tasks: [{ id: 't1', text: 'Review Chapter 4 Inflation Models', done: false }, { id: 't2', text: 'Active Recall: Fiscal Multiplier', done: true }] },
+                { id: 'sub_2', title: 'Biochemistry', color: '#D8A48F', tasks: [{ id: 't1', text: 'Memorize Krebs Cycle Enzymes', done: false }] }
+            ],
+            sessions: [
+                { id: 'ses_1', subjectId: 'sub_1', date: new Date().toISOString().split('T')[0], time: '18:00', duration: 45, priority: 'High', completed: false, reminded: false }
+            ],
+            habits: {
+                waterGlasses: 3,
+                nap: false,
+                stretch: true,
+                walk: false,
+                reflection: false,
+                lastResetDate: new Date().toISOString().split('T')[0]
+            }
+        };
+
+        // Timer Engine Variables
+        let timerInterval = null;
+        let timerTotalSeconds = 25 * 60;
+        let timerRemainingSeconds = 25 * 60;
+        let isTimerRunning = false;
+        let activeTimerMode = 'study'; // 'study' or 'break'
+        let currentTimerSessionId = null;
+
+        /* INITIALIZATION */
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStateFromStorage();
+            initDateHeader();
+            renderAll();
+            initDefaultInputs();
+            checkUpcomingAlarmsInterval();
+            setInterval(checkUpcomingAlarmsInterval, 10000); // Check scheduled alarms every 10 secs
+        });
+
+        function loadStateFromStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    appState = JSON.parse(saved);
+                    // Reset daily habits if day changed
+                    const today = new Date().toISOString().split('T')[0];
+                    if (appState.habits.lastResetDate !== today) {
+                        appState.habits.waterGlasses = 0;
+                        appState.habits.nap = false;
+                        appState.habits.stretch = false;
+                        appState.habits.walk = false;
+                        appState.habits.reflection = false;
+                        appState.habits.lastResetDate = today;
+                        saveState();
+                    }
+                } catch (e) {
+                    console.error("Storage parse error", e);
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        }
+
+        function initDateHeader() {
+            const options = { weekday: 'short', month: 'short', day: 'numeric' };
+            document.getElementById('header-date').innerText = new Date().toLocaleDateString('en-US', options).toUpperCase();
+        }
+
+        function initDefaultInputs() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('session-date').value = todayStr;
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 15);
+            document.getElementById('session-time').value = now.toTimeString().substring(0, 5);
+        }
+
+        /* NAVIGATION TAB SWITCHER */
+        function switchTab(tabKey) {
+            const tabs = ['schedule', 'timer', 'subjects', 'habits'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const navEl = document.getElementById(`nav-${t}`);
+                if (t === tabKey) {
+                    el.classList.remove('hidden');
+                    navEl.classList.add('tab-active', 'text-gold-accent');
+                    navEl.classList.remove('text-charcoal-muted');
+                } else {
+                    el.classList.add('hidden');
+                    navEl.classList.remove('tab-active', 'text-gold-accent');
+                    navEl.classList.add('text-charcoal-muted');
+                }
+            });
+        }
+
+        /* RENDERERS */
+        function renderAll() {
+            renderSchedule();
+            renderSubjects();
+            renderSubjectSelectOptions();
+            renderWaterTracker();
+            renderHabitCheckboxes();
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('schedule-list');
+            container.innerHTML = '';
+
+            if (appState.sessions.length === 0) {
+                container.innerHTML = `
+                        <div class="text-center py-8 text-charcoal-muted bg-cream-card rounded-2xl border border-border-soft p-4">
+                            <p class="font-serif text-base italic">No scheduled study blocks yet.</p>
+                            <p class="text-[11px] mt-1">Tap "Plan Session" above to set your study schedule.</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            // Sort by Date & Time
+            const sorted = [...appState.sessions].sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
+
+            sorted.forEach(session => {
+                const subject = appState.subjects.find(s => s.id === session.subjectId) || { title: 'General Focus', color: '#C5A059' };
+                const isCompleted = session.completed;
+                const sessionDateTime = new Date(`${session.date}T${session.time}`);
+                const formattedTime = sessionDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const card = document.createElement('div');
+                card.className = `bg-cream-card rounded-2xl p-4 border border-border-soft shadow-atelier-sm transition-all duration-200 flex items-center justify-between ${isCompleted ? 'opacity-60' : ''}`;
+
+                card.innerHTML = `
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-2.5 h-10 rounded-full" style="background-color: ${subject.color}"></div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="font-semibold text-sm text-charcoal-main ${isCompleted ? 'line-through text-charcoal-muted' : ''}">${subject.title}</h4>
+                                    <span class="text-[9px] px-2 py-0.5 rounded-full font-semibold ${session.priority === 'High' ? 'bg-rose-soft text-rose-800' : 'bg-gold-light text-gold-accent'}">${session.priority}</span>
+                                </div>
+                                <p class="text-xs text-charcoal-muted mt-0.5">${session.date} • ${formattedTime} (${session.duration} mins)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            ${!isCompleted ? `
+                                <button onclick="launchSessionInTimer('${session.id}')" title="Start Focus Timer" class="p-2 rounded-xl bg-gold-light hover:bg-gold-accent hover:text-white text-gold-accent transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                                </button>
+                            ` : ''}
+                            <button onclick="toggleSessionCompleted('${session.id}')" title="${isCompleted ? 'Mark Active' : 'Mark Completed'}" class="p-2 rounded-xl ${isCompleted ? 'bg-gold-accent text-white' : 'bg-rose-soft text-charcoal-main'} hover:opacity-80 transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </button>
+                            <button onclick="deleteSession('${session.id}')" title="Delete" class="p-2 rounded-xl text-charcoal-muted hover:text-red-500 transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderSubjects() {
+            const container = document.getElementById('subject-list');
+            container.innerHTML = '';
+
+            if (appState.subjects.length === 0) {
+                container.innerHTML = `<p class="text-xs text-charcoal-muted text-center py-6">No subjects created yet.</p>`;
+                return;
+            }
+
+            appState.subjects.forEach(sub => {
+                const totalTasks = sub.tasks.length;
+                const doneTasks = sub.tasks.filter(t => t.done).length;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bg-cream-card rounded-2xl border border-border-soft overflow-hidden shadow-atelier-sm transition-all duration-200';
+                wrapper.innerHTML = `
+                        <div class="p-4 flex items-center justify-between cursor-pointer" onclick="toggleSubjectAccordion('${sub.id}')">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 rounded-full" style="background-color: ${sub.color}"></div>
+                                <div>
+                                    <h3 class="font-semibold text-sm text-charcoal-main">${sub.title}</h3>
+                                    <p class="text-[11px] text-charcoal-muted">${doneTasks}/${totalTasks} sub-tasks reviewed</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="event.stopPropagation(); deleteSubject('${sub.id}')" class="text-charcoal-muted hover:text-red-500 p-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                                <svg id="chevron-${sub.id}" class="w-4 h-4 text-charcoal-muted transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                        <div id="accordion-content-${sub.id}" class="hidden bg-cream/50 px-4 pb-4 pt-1 border-t border-border-soft space-y-3">
+                            <div class="space-y-2 pt-2" id="task-list-${sub.id}">
+                                ${sub.tasks.map(t => `
+                                    <div class="flex items-center justify-between bg-cream-card p-2.5 rounded-xl border border-border-soft text-xs">
+                                        <div class="flex items-center space-x-2.5">
+                                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskDone('${sub.id}', '${t.id}')" class="w-4 h-4 rounded-full accent-gold-accent cursor-pointer">
+                                            <span class="${t.done ? 'line-through text-charcoal-muted' : 'text-charcoal-main'} font-medium">${t.text}</span>
+                                        </div>
+                                        <button onclick="deleteTask('${sub.id}', '${t.id}')" class="text-charcoal-muted hover:text-red-400">✕</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <!-- Add task inline input -->
+                            <div class="flex items-center space-x-2 pt-1">
+                                <input type="text" id="input-new-task-${sub.id}" placeholder="Add active recall topic or sub-task..." class="flex-1 bg-cream border border-border-soft rounded-xl px-3 py-1.5 text-xs text-charcoal-main focus:outline-none focus:border-gold-accent">
+                                <button onclick="addTaskToSubject('${sub.id}')" class="bg-gold-accent hover:bg-gold-hover text-white px-3 py-1.5 rounded-xl text-xs font-semibold">Add</button>
+                            </div>
+                        </div>
+                    `;
+                container.appendChild(wrapper);
+            });
+        }
+
+        function toggleSubjectAccordion(subId) {
+            const content = document.getElementById(`accordion-content-${subId}`);
+            const chevron = document.getElementById(`chevron-${subId}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        function renderSubjectSelectOptions() {
+            const select = document.getElementById('session-subject-select');
+            select.innerHTML = '';
+            if (appState.subjects.length === 0) {
+                select.innerHTML = '<option value="">No Subjects (Create One First)</option>';
+                return;
+            }
+            appState.subjects.forEach(s => {
+                select.innerHTML += `<option value="${s.id}">${s.title}</option>`;
+            });
+        }
+
+        function renderWaterTracker() {
+            document.getElementById('water-count').innerText = appState.habits.waterGlasses;
+            const container = document.getElementById('water-bubbles');
+            container.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const filled = i <= appState.habits.waterGlasses;
+                const bubble = document.createElement('div');
+                bubble.className = `h-7 rounded-xl transition-all duration-300 flex items-center justify-center text-xs ${filled ? 'bg-gold-accent text-white shadow-atelier-sm' : 'bg-rose-soft/60 text-charcoal-muted'}`;
+                bubble.innerText = '💧';
+                container.appendChild(bubble);
+            }
+        }
+
+        function renderHabitCheckboxes() {
+            const habits = ['nap', 'stretch', 'walk', 'reflection'];
+            habits.forEach(h => {
+                const el = document.getElementById(`habit-${h}`);
+                const check = el.querySelector('.habit-check');
+                if (appState.habits[h]) {
+                    el.classList.add('border-gold-accent', 'bg-gold-light/40');
+                    check.classList.add('bg-gold-accent', 'text-white', 'border-gold-accent');
+                    check.innerText = '✓';
+                } else {
+                    el.classList.remove('border-gold-accent', 'bg-gold-light/40');
+                    check.classList.remove('bg-gold-accent', 'text-white', 'border-gold-accent');
+                    check.innerText = '';
+                }
+            });
+        }
+
+        /* ACTIONS & HANDLERS */
+        function handleSaveSession(e) {
+            e.preventDefault();
+            const subjectId = document.getElementById('session-subject-select').value;
+            if (!subjectId) {
+                showToast('Please add or select a valid subject first.', 'warning');
+                return;
+            }
+            const date = document.getElementById('session-date').value;
+            const time = document.getElementById('session-time').value;
+            const duration = parseInt(document.getElementById('session-duration').value) || 30;
+            const priority = document.getElementById('session-priority').value;
+
+            const newSession = {
+                id: 'ses_' + Date.now(),
+                subjectId,
+                date,
+                time,
+                duration,
+                priority,
+                completed: false,
+                reminded: false
+            };
+
+            appState.sessions.push(newSession);
+            saveState();
+            renderSchedule();
+            closeModal('add-session-modal');
+            showToast('Study session scheduled gracefully.', 'success');
+        }
+
+        function handleSaveSubject(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('subject-title-input');
+            const title = titleInput.value.trim();
+            if (!title) return;
+
+            const color = document.querySelector('input[name="subject-color"]:checked')?.value || '#C5A059';
+
+            const newSubject = {
+                id: 'sub_' + Date.now(),
+                title,
+                color,
+                tasks: []
+            };
+
+            appState.subjects.push(newSubject);
+            saveState();
+            renderAll();
+            titleInput.value = '';
+            closeModal('add-subject-modal');
+            showToast(`Subject "${title}" created.`, 'success');
+        }
+
+        function deleteSession(id) {
+            appState.sessions = appState.sessions.filter(s => s.id !== id);
+            saveState();
+            renderSchedule();
+            showToast('Session removed.', 'info');
+        }
+
+        function toggleSessionCompleted(id) {
+            const ses = appState.sessions.find(s => s.id === id);
+            if (ses) {
+                ses.completed = !ses.completed;
+                saveState();
+                renderSchedule();
+            }
+        }
+
+        function deleteSubject(subId) {
+            appState.subjects = appState.subjects.filter(s => s.id !== subId);
+            appState.sessions = appState.sessions.filter(s => s.subjectId !== subId);
+            saveState();
+            renderAll();
+            showToast('Subject module deleted.', 'info');
+        }
+
+        function addTaskToSubject(subId) {
+            const input = document.getElementById(`input-new-task-${subId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const sub = appState.subjects.find(s => s.id === subId);
+            if (sub) {
+                sub.tasks.push({ id: 't_' + Date.now(), text, done: false });
+                saveState();
+                renderSubjects();
+            }
+        }
+
+        function toggleTaskDone(subId, taskId) {
+            const sub = appState.subjects.find(s => s.id === subId);
+            if (sub) {
+                const task = sub.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.done = !task.done;
+                    saveState();
+                    renderSubjects();
+                }
+            }
+        }
+
+        function deleteTask(subId, taskId) {
+            const sub = appState.subjects.find(s => s.id === subId);
+            if (sub) {
+                sub.tasks = sub.tasks.filter(t => t.id !== taskId);
+                saveState();
+                renderSubjects();
+            }
+        }
+
+        function addWaterGlass() {
+            if (appState.habits.waterGlasses < 8) {
+                appState.habits.waterGlasses += 1;
+                saveState();
+                renderWaterTracker();
+                if (appState.habits.waterGlasses === 8) {
+                    showToast('🎉 Hydration Goal Achieved!', 'success');
+                }
+            } else {
+                showToast('Hydration goal already completed for today!', 'info');
+            }
+        }
+
+        function toggleHabitItem(habitKey) {
+            appState.habits[habitKey] = !appState.habits[habitKey];
+            saveState();
+            renderHabitCheckboxes();
+        }
+
+        /* TIMER ENGINE & BREAK SYSTEM */
+        function launchSessionInTimer(sessionId) {
+            const ses = appState.sessions.find(s => s.id === sessionId);
+            if (!ses) return;
+
+            const subject = appState.subjects.find(s => s.id === ses.subjectId);
+
+            currentTimerSessionId = sessionId;
+            activeTimerMode = 'study';
+            timerTotalSeconds = ses.duration * 60;
+            timerRemainingSeconds = timerTotalSeconds;
+
+            document.getElementById('timer-mode-badge').innerText = 'Deep Study Block';
+            document.getElementById('timer-subject-title').innerText = subject ? subject.title : 'Study Block';
+            document.getElementById('timer-subtext').innerText = `Focus target: ${ses.duration} Minutes`;
+
+            updateTimerDisplay();
+            switchTab('timer');
+        }
+
+        function startBreakSession(mins, title) {
+            resetTimer();
+            activeTimerMode = 'break';
+            currentTimerSessionId = null;
+            timerTotalSeconds = mins * 60;
+            timerRemainingSeconds = timerTotalSeconds;
+
+            document.getElementById('timer-mode-badge').innerText = 'Restorative Break';
+            document.getElementById('timer-subject-title').innerText = title;
+            document.getElementById('timer-subtext').innerText = 'Unwind and recharge your cognitive battery';
+
+            updateTimerDisplay();
+            toggleTimer(); // auto start break
+        }
+
+        function toggleTimer() {
+            const startBtn = document.getElementById('timer-start-btn');
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                startBtn.innerText = 'Pause';
+                startBtn.classList.replace('bg-charcoal-main', 'bg-gold-accent');
+
+                timerInterval = setInterval(() => {
+                    if (timerRemainingSeconds > 0) {
+                        timerRemainingSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        handleTimerCompletion();
+                    }
+                }, 1000);
+            } else {
+                pauseTimer();
+            }
+        }
+
+        function pauseTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+            const startBtn = document.getElementById('timer-start-btn');
+            startBtn.innerText = 'Resume';
+            startBtn.classList.replace('bg-gold-accent', 'bg-charcoal-main');
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerRemainingSeconds = timerTotalSeconds;
+            updateTimerDisplay();
+            document.getElementById('timer-start-btn').innerText = 'Start Focus';
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerRemainingSeconds / 60);
+            const secs = timerRemainingSeconds % 60;
+            document.getElementById('timer-display').innerText =
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function handleTimerCompletion() {
+            pauseTimer();
+            playAudioAlarm();
+
+            if (activeTimerMode === 'study') {
+                showToast('🔔 Study Session Complete! Time for a restorative break.', 'success');
+                sendPushNotification('Atelier Study Companion', 'Focus block finished! Take a moment to hydrate or stretch.');
+                if (currentTimerSessionId) {
+                    toggleSessionCompleted(currentTimerSessionId);
+                }
+            } else {
+                showToast('✨ Break Complete! Ready to immerse back in work?', 'info');
+                sendPushNotification('Atelier Study Companion', 'Your break has ended. Ready for your next study block?');
+            }
+        }
+
+        /* WEB AUDIO ALARM SYNTHESIZER */
+        function playAudioAlarm() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                // Gentle chime sequence
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+
+                    gain.gain.setValueAtTime(0.01, ctx.currentTime + idx * 0.2);
+                    gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + idx * 0.2 + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.2 + 0.8);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start(ctx.currentTime + idx * 0.2);
+                    osc.stop(ctx.currentTime + idx * 0.2 + 0.9);
+                });
+            } catch (e) {
+                console.warn('Audio play restricted or unallowed', e);
+            }
+        }
+
+        function testAudioAlarm() {
+            playAudioAlarm();
+            showToast('Chime audio test played.', 'info');
+        }
+
+        /* PUSH NOTIFICATIONS & SCHEDULER REMINDERS */
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showToast('Notifications are not supported in this browser.', 'warning');
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    showToast('Push notifications enabled successfully!', 'success');
+                    sendPushNotification('Atelier Study', 'Notifications are active for your study schedule.');
+                } else {
+                    showToast('Notification permission was denied.', 'warning');
+                }
+            });
+        }
+
+        function sendPushNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✨</text></svg>'
+                });
+            }
+        }
+
+        function checkUpcomingAlarmsInterval() {
+            const now = new Date();
+            appState.sessions.forEach(session => {
+                if (session.completed || session.reminded) return;
+
+                const sessionTime = new Date(`${session.date}T${session.time}`);
+                const diffMs = sessionTime - now;
+
+                // If session is starting within 1 minute or right now
+                if (diffMs <= 60000 && diffMs >= -120000) {
+                    session.reminded = true;
+                    saveState();
+                    const subject = appState.subjects.find(s => s.id === session.subjectId);
+                    const titleName = subject ? subject.title : 'Study Block';
+
+                    playAudioAlarm();
+                    showToast(`⏰ Time to study ${titleName}!`, 'warning');
+                    sendPushNotification('Study Session Starting', `It is time for your scheduled ${titleName} session.`);
+                }
+            });
+        }
+
+        /* UI MODAL & TOAST HELPERS */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            let bgClass = 'bg-charcoal-main text-white';
+            if (type === 'success') bgClass = 'bg-gold-accent text-white';
+            if (type === 'warning') bgClass = 'bg-amber-700 text-white';
+
+            toast.className = `p-3 rounded-2xl shadow-2xl text-xs font-medium flex items-center justify-between transition-all duration-300 pointer-events-auto fade-in ${bgClass}`;
+            toast.innerHTML = `
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.remove()" class="ml-3 text-white/80 hover:text-white">✕</button>
+                `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
