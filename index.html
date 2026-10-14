@@ -10,36 +10,57 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cream: '#FFF5F7',
-                        'cream-card': '#FFFFFF',
-                        'gold-accent': '#D46A88',
-                        'gold-hover': '#C25674',
-                        'gold-light': '#FCE8EE',
-                        'rose-nude': '#F5D6DF',
-                        'rose-soft': '#FBE4EC',
-                        'charcoal-main': '#2E2528',
-                        'charcoal-muted': '#8C787E',
-                        'border-soft': '#F0D6DE',
-                    },
-                    fontFamily: {
-                        serif: ['"Cormorant Garamond"', 'serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'atelier': '0 12px 35px -10px rgba(212, 106, 136, 0.15)',
-                        'atelier-sm': '0 4px 15px rgba(212, 106, 136, 0.08)',
-                        'atelier-inner': 'inset 0 2px 4px rgba(0,0,0,0.03)'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
+        /* Theme Dynamic Variables */
+        :root {
+            --bg-cream: #FFF5F7;
+            --bg-card: #FFFFFF;
+            --color-accent: #D46A88;
+            --color-hover: #C25674;
+            --bg-light: #FCE8EE;
+            --bg-nude: #F5D6DF;
+            --bg-soft: #FBE4EC;
+            --color-charcoal: #2E2528;
+            --color-muted: #8C787E;
+            --border-soft: #F0D6DE;
+        }
+
+        .app-bg {
+            background-color: var(--bg-cream);
+        }
+
+        .app-card {
+            background-color: var(--bg-card);
+        }
+
+        .app-text-main {
+            color: var(--color-charcoal);
+        }
+
+        .app-text-muted {
+            color: var(--color-muted);
+        }
+
+        .app-text-accent {
+            color: var(--color-accent);
+        }
+
+        .app-bg-accent {
+            background-color: var(--color-accent);
+        }
+
+        .app-bg-soft {
+            background-color: var(--bg-soft);
+        }
+
+        .app-bg-light {
+            background-color: var(--bg-light);
+        }
+
+        .app-border-soft {
+            border-color: var(--border-soft);
+        }
+
         * {
             -webkit-tap-highlight-color: transparent;
             user-select: none;
@@ -54,18 +75,25 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #FFF5F7;
+            background: var(--bg-cream);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #F5D6DF;
+            background: var(--bg-nude);
             border-radius: 4px;
         }
 
-        .tab-active {
-            color: #D46A88;
-            border-top: 2px solid #D46A88;
+        /* Strict Tab Active Rules */
+        .nav-btn {
+            color: var(--color-muted);
+            border-top: 2px solid transparent;
+            transition: all 0.2s ease;
         }
+
+            .nav-btn.tab-active {
+                color: var(--color-accent) !important;
+                border-top-color: var(--color-accent) !important;
+            }
 
         .fade-in {
             animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -112,87 +140,136 @@
         .alarm-ringing-animation {
             animation: ringShake 0.5s infinite ease-in-out;
         }
+
+        @keyframes flamePulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .streak-flame {
+            animation: flamePulse 1.5s infinite ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-cream font-sans text-charcoal-main antialiased min-h-screen flex justify-center selection:bg-rose-nude selection:text-charcoal-main">
+<body class="app-bg font-sans app-text-main antialiased min-h-screen flex justify-center selection:bg-rose-nude transition-colors duration-300" id="body-root">
 
     <!-- Mobile Frame Shell -->
-    <div class="w-full max-w-[430px] min-h-screen bg-cream flex flex-col relative shadow-2xl border-x border-border-soft/60">
+    <div class="w-full max-w-[430px] min-h-screen app-bg flex flex-col relative shadow-2xl border-x app-border-soft transition-colors duration-300" id="app-shell">
 
-        <!-- Header -->
-        <header class="pt-7 pb-4 px-6 bg-cream/90 backdrop-blur-md sticky top-0 z-30 border-b border-border-soft/80 flex items-center justify-between">
-            <div>
-                <p class="text-[10px] tracking-[0.2em] uppercase font-semibold text-gold-accent" id="header-date">TODAY</p>
-                <h1 class="font-serif text-2xl font-semibold tracking-tight text-charcoal-main">Shena's Study Planner</h1>
-            </div>
-            <div class="flex items-center space-x-2">
-                <button id="notification-btn" onclick="requestNotificationAndAudioPermission()" class="p-2 rounded-full bg-rose-soft text-charcoal-muted hover:text-gold-accent transition-all duration-200" title="Enable Alarms & Notifications">
-                    <svg id="bell-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                    </svg>
-                </button>
-                <button onclick="testAudioAlarm()" class="p-2 rounded-full bg-rose-soft text-charcoal-muted hover:text-gold-accent transition-all duration-200" title="Sound Check">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
-                    </svg>
-                </button>
+        <!-- Header (Professional Academic Design) -->
+        <header class="pt-6 pb-4 px-5 app-bg/95 backdrop-blur-md sticky top-0 z-30 border-b app-border-soft transition-colors duration-300">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center space-x-2">
+                    <!-- Vector Academic Emblem Logo -->
+                    <div class="w-9 h-9 rounded-2xl app-bg-light border app-border-soft flex items-center justify-center shadow-sm">
+                        <svg class="w-5 h-5 app-text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-[9px] app-text-muted">•</span>
+                            <span class="text-[15px] font-semibold app-text-accent tracking-widest uppercase" id="header-date">TODAY</span>
+                        </div>
+                        <h1 class="font-serif text-xl font-bold tracking-tight app-text-main leading-tight">Shena's Study Planner</h1>
+                    </div>
+                </div>
+
+                <!-- Control Buttons & Streak -->
+                <div class="flex items-center space-x-1.5">
+                    <!-- Streak Badge Counter -->
+                    <div onclick="showStreakInfo()" class="flex items-center space-x-1 px-2.5 py-1 rounded-full app-bg-light border app-border-soft cursor-pointer shadow-sm hover:scale-105 transition-transform" title="Your Daily Study Streak">
+                        <span class="text-xs streak-flame">🔥</span>
+                        <span id="header-streak-count" class="text-xs font-bold app-text-accent">1</span>
+                    </div>
+
+                    <button id="notification-btn" onclick="requestNotificationAndAudioPermission()" class="p-2 rounded-full app-bg-soft app-text-muted hover:app-text-accent transition-all duration-200" title="Enable Alarms & Notifications">
+                        <svg id="bell-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                    </button>
+                    <button onclick="openModal('settings-modal')" class="p-2 rounded-full app-bg-soft app-text-muted hover:app-text-accent transition-all duration-200" title="Personalize & Settings">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </header>
 
-        <!-- Toast / Notification Banner Container -->
-        <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-[390px] z-50 pointer-events-none space-y-2"></div>
+        <!-- Toast Container -->
+        <div id="toast-container" class="fixed top-24 left-1/2 -translate-x-1/2 w-[90%] max-w-[390px] z-50 pointer-events-none space-y-2"></div>
 
-        <!-- Main Body / View Switcher -->
+        <!-- Main Body -->
         <main class="flex-1 px-5 pt-4 pb-24 overflow-y-auto" id="app-content">
 
             <!-- TAB 1: SCHEDULE & PLANNER -->
             <section id="tab-schedule" class="tab-content fade-in space-y-6">
-                <div class="bg-gradient-to-r from-rose-soft via-gold-light to-rose-soft p-4 rounded-2xl border border-border-soft text-center shadow-atelier-sm">
-                    <p class="font-serif italic text-charcoal-main text-sm">"Grace in focus, precision in endeavor."</p>
+                <div class="app-bg-soft p-4 rounded-2xl border app-border-soft text-center shadow-sm transition-colors duration-300">
+                    <p class="font-serif italic app-text-main text-sm">"Grace in focus, precision in endeavor."</p>
+                </div>
+
+                <!-- Exam Countdown Widget -->
+                <div id="exam-countdown-card" class="app-card p-4 rounded-3xl border app-border-soft shadow-sm flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-2xl p-2.5 app-bg-light rounded-2xl">⏳</span>
+                        <div>
+                            <h4 id="exam-title-display" class="text-xs font-semibold app-text-main">Next Big Exam</h4>
+                            <p id="exam-days-display" class="text-[11px] app-text-muted">No exam target set yet</p>
+                        </div>
+                    </div>
+                    <button onclick="openModal('exam-modal')" class="text-xs app-text-accent font-medium hover:underline">Configure</button>
                 </div>
 
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="font-serif text-xl font-semibold text-charcoal-main">Study Schedule</h2>
-                        <p class="text-xs text-charcoal-muted">Upcoming planned sessions & alarms</p>
+                        <h2 class="font-serif text-xl font-semibold app-text-main">Study Schedule</h2>
+                        <p class="text-xs app-text-muted">Upcoming planned sessions & alarms</p>
                     </div>
-                    <button onclick="openModal('add-session-modal')" class="bg-charcoal-main hover:bg-gold-accent text-white px-3.5 py-2 rounded-full text-xs font-medium tracking-wide flex items-center space-x-1.5 transition-all duration-300 shadow-atelier-sm">
+                    <button onclick="openModal('add-session-modal')" class="bg-slate-800 text-white px-3.5 py-2 rounded-full text-xs font-medium tracking-wide flex items-center space-x-1.5 transition-all duration-300 shadow-sm">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         <span>Plan Session</span>
                     </button>
                 </div>
 
-                <div id="schedule-list" class="space-y-3">
-                    <!-- Dynamic Scheduled Items -->
-                </div>
+                <div id="schedule-list" class="space-y-3"></div>
             </section>
 
             <!-- TAB 2: FOCUS TIMER & BREAKS -->
             <section id="tab-timer" class="tab-content hidden fade-in space-y-6">
-                <div class="bg-cream-card rounded-3xl p-6 border border-border-soft shadow-atelier text-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-nude via-gold-accent to-rose-nude"></div>
-
-                    <span id="timer-mode-badge" class="inline-block px-3 py-1 rounded-full text-[10px] uppercase font-semibold tracking-widest bg-gold-light text-gold-accent border border-gold-accent/20 mb-3">
+                <div class="app-card rounded-3xl p-6 border app-border-soft shadow-md text-center relative overflow-hidden transition-colors duration-300">
+                    <span id="timer-mode-badge" class="inline-block px-3 py-1 rounded-full text-[10px] uppercase font-semibold tracking-widest app-bg-light app-text-accent border app-border-soft mb-3">
                         Deep Study Block
                     </span>
 
-                    <h2 id="timer-subject-title" class="font-serif text-xl font-semibold text-charcoal-main truncate px-4">Standard Session</h2>
+                    <h2 id="timer-subject-title" class="font-serif text-xl font-semibold app-text-main truncate px-4">Standard Session</h2>
 
                     <div class="my-6 py-4 flex flex-col items-center justify-center">
-                        <div class="font-serif text-6xl font-semibold text-charcoal-main tracking-tight font-mono" id="timer-display">
+                        <div class="font-serif text-6xl font-semibold app-text-main tracking-tight font-mono" id="timer-display">
                             30:00
                         </div>
-                        <p class="text-xs text-charcoal-muted mt-2 font-medium" id="timer-subtext">Stay immersed in deep work</p>
+                        <p class="text-xs app-text-muted mt-2 font-medium" id="timer-subtext">Stay immersed in deep work</p>
                     </div>
 
                     <div class="flex items-center justify-center space-x-2.5">
-                        <button id="timer-start-btn" onclick="toggleTimer()" class="bg-charcoal-main text-white px-6 py-3 rounded-full text-xs font-semibold tracking-wider uppercase hover:bg-gold-accent transition-all duration-300 shadow-atelier">
+                        <button id="timer-start-btn" onclick="toggleTimer()" class="bg-slate-800 text-white px-6 py-3 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 shadow-md">
                             Start Focus
                         </button>
-                        <button onclick="pauseTimer()" class="bg-rose-soft text-charcoal-main px-4 py-3 rounded-full text-xs font-semibold tracking-wider uppercase hover:bg-rose-nude transition-all duration-200">
+                        <button onclick="pauseTimer()" class="app-bg-soft app-text-main px-4 py-3 rounded-full text-xs font-semibold tracking-wider uppercase hover:app-bg-light transition-all duration-200">
                             Pause
                         </button>
-                        <button onclick="markSessionUnfinished()" class="bg-border-soft text-charcoal-main px-3 py-3 rounded-full text-[11px] font-medium hover:bg-rose-soft transition-all duration-200" title="Mark Unfinished">
+                        <button onclick="markSessionUnfinished()" class="app-bg-soft app-text-main px-3 py-3 rounded-full text-[11px] font-medium hover:app-bg-light transition-all duration-200">
                             Unfinish
                         </button>
                     </div>
@@ -201,26 +278,35 @@
                 <!-- Smart Break Assistant -->
                 <div>
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-serif text-lg font-semibold text-charcoal-main">Smart Break Rituals</h3>
-                        <span class="text-xs text-charcoal-muted">Choose your rest</span>
+                        <h3 class="font-serif text-lg font-semibold app-text-main">Smart Break Rituals</h3>
+                        <span class="text-xs app-text-muted">Choose your rest</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2.5">
-                        <button onclick="startBreakSession(5, 'Hydration & Stretch')" class="p-3 bg-cream-card rounded-2xl border border-border-soft text-center hover:border-gold-accent hover:shadow-atelier-sm transition-all duration-200">
+                        <button onclick="startBreakSession(5, 'Hydration & Stretch')" class="p-3 app-card rounded-2xl border app-border-soft text-center hover:border-emerald-400 transition-all duration-200">
                             <span class="text-xl block mb-1">💧</span>
-                            <span class="text-xs font-semibold text-charcoal-main block">5 Mins</span>
-                            <span class="text-[10px] text-charcoal-muted block leading-tight">Hydration</span>
+                            <span class="text-xs font-semibold app-text-main block">5 Mins</span>
+                            <span class="text-[10px] app-text-muted block leading-tight">Hydration</span>
                         </button>
-                        <button onclick="startBreakSession(15, 'Stretching & Fresh Air')" class="p-3 bg-cream-card rounded-2xl border border-border-soft text-center hover:border-gold-accent hover:shadow-atelier-sm transition-all duration-200">
+                        <button onclick="startBreakSession(15, 'Stretching & Fresh Air')" class="p-3 app-card rounded-2xl border app-border-soft text-center hover:border-emerald-400 transition-all duration-200">
                             <span class="text-xl block mb-1">🌿</span>
-                            <span class="text-xs font-semibold text-charcoal-main block">15 Mins</span>
-                            <span class="text-[10px] text-charcoal-muted block leading-tight">Refresh Walk</span>
+                            <span class="text-xs font-semibold app-text-main block">15 Mins</span>
+                            <span class="text-[10px] app-text-muted block leading-tight">Refresh Walk</span>
                         </button>
-                        <button onclick="startBreakSession(20, 'Power Nap')" class="p-3 bg-cream-card rounded-2xl border border-border-soft text-center hover:border-gold-accent hover:shadow-atelier-sm transition-all duration-200">
+                        <button onclick="startBreakSession(20, 'Power Nap')" class="p-3 app-card rounded-2xl border app-border-soft text-center hover:border-emerald-400 transition-all duration-200">
                             <span class="text-xl block mb-1">🌙</span>
-                            <span class="text-xs font-semibold text-charcoal-main block">20 Mins</span>
-                            <span class="text-[10px] text-charcoal-muted block leading-tight">Power Nap</span>
+                            <span class="text-xs font-semibold app-text-main block">20 Mins</span>
+                            <span class="text-[10px] app-text-muted block leading-tight">Power Nap</span>
                         </button>
                     </div>
+                </div>
+
+                <!-- Quick Scratchpad Widget -->
+                <div class="app-card rounded-3xl p-5 border app-border-soft shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-serif text-base font-semibold app-text-main">Study Scratchpad & Quick Notes</h3>
+                        <span class="text-[10px] app-text-muted">Auto-saved</span>
+                    </div>
+                    <textarea id="study-scratchpad" oninput="saveScratchpad(this.value)" placeholder="Jot down quick formulas, ideas, or reminders here..." class="w-full h-24 app-bg border app-border-soft rounded-2xl p-3 text-xs app-text-main focus:outline-none focus:border-emerald-400 resize-none"></textarea>
                 </div>
             </section>
 
@@ -228,307 +314,390 @@
             <section id="tab-subjects" class="tab-content hidden fade-in space-y-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="font-serif text-xl font-semibold text-charcoal-main">Subject Modules</h2>
-                        <p class="text-xs text-charcoal-muted">Sub-tasks & active recall checklists</p>
+                        <h2 class="font-serif text-xl font-semibold app-text-main">Subject Modules</h2>
+                        <p class="text-xs app-text-muted">Sub-tasks & active recall checklists</p>
                     </div>
-                    <button onclick="openModal('add-subject-modal')" class="bg-charcoal-main hover:bg-gold-accent text-white px-3.5 py-2 rounded-full text-xs font-medium tracking-wide flex items-center space-x-1.5 transition-all duration-300">
+                    <button onclick="openModal('add-subject-modal')" class="bg-slate-800 text-white px-3.5 py-2 rounded-full text-xs font-medium tracking-wide flex items-center space-x-1.5 transition-all duration-300">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         <span>New Subject</span>
                     </button>
                 </div>
 
-                <div id="subject-list" class="space-y-3">
-                    <!-- Dynamic Subjects -->
-                </div>
+                <div id="subject-list" class="space-y-3"></div>
             </section>
 
             <!-- TAB 4: HISTORY & MONITORING -->
             <section id="tab-history" class="tab-content hidden fade-in space-y-5">
                 <div>
-                    <h2 class="font-serif text-xl font-semibold text-charcoal-main">Study History & Monitoring</h2>
-                    <p class="text-xs text-charcoal-muted">Track in-progress, unfinished, and completed sessions</p>
+                    <h2 class="font-serif text-xl font-semibold app-text-main">Study History & Monitoring</h2>
+                    <p class="text-xs app-text-muted">Track in-progress, unfinished, and completed sessions</p>
                 </div>
 
-                <!-- History Filter Tabs -->
-                <div class="flex bg-rose-soft/60 p-1 rounded-2xl text-xs font-medium">
-                    <button onclick="switchHistoryFilter('inprogress')" id="filter-inprogress" class="flex-1 py-2 rounded-xl text-center transition-all bg-cream-card text-charcoal-main shadow-atelier-sm">In Progress</button>
-                    <button onclick="switchHistoryFilter('unfinish')" id="filter-unfinish" class="flex-1 py-2 rounded-xl text-center transition-all text-charcoal-muted">Unfinished</button>
-                    <button onclick="switchHistoryFilter('finish')" id="filter-finish" class="flex-1 py-2 rounded-xl text-center transition-all text-charcoal-muted">Finished</button>
+                <div class="flex app-bg-soft p-1 rounded-2xl text-xs font-medium">
+                    <button onclick="switchHistoryFilter('inprogress')" id="filter-inprogress" class="flex-1 py-2 rounded-xl text-center transition-all app-card app-text-main shadow-sm font-semibold">In Progress</button>
+                    <button onclick="switchHistoryFilter('unfinish')" id="filter-unfinish" class="flex-1 py-2 rounded-xl text-center transition-all app-text-muted">Unfinished</button>
+                    <button onclick="switchHistoryFilter('finish')" id="filter-finish" class="flex-1 py-2 rounded-xl text-center transition-all app-text-muted">Finished</button>
                 </div>
 
-                <!-- History Item List -->
-                <div id="history-list" class="space-y-3">
-                    <!-- Dynamic History Items -->
-                </div>
+                <div id="history-list" class="space-y-3"></div>
             </section>
 
             <!-- TAB 5: HABITS & WELLNESS -->
             <section id="tab-habits" class="tab-content hidden fade-in space-y-6">
                 <div>
-                    <h2 class="font-serif text-xl font-semibold text-charcoal-main">Daily Balance</h2>
-                    <p class="text-xs text-charcoal-muted">Sustain your cognitive stamina</p>
+                    <h2 class="font-serif text-xl font-semibold app-text-main">Daily Balance</h2>
+                    <p class="text-xs app-text-muted">Sustain your cognitive stamina</p>
                 </div>
 
                 <!-- Water Tracker Card -->
-                <div class="bg-cream-card rounded-3xl p-5 border border-border-soft shadow-atelier space-y-4">
+                <div class="app-card rounded-3xl p-5 border app-border-soft shadow-sm space-y-4">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2.5">
-                            <span class="p-2.5 bg-gold-light rounded-2xl text-gold-accent text-lg">💧</span>
+                            <span class="p-2.5 app-bg-light rounded-2xl app-text-accent text-lg">💧</span>
                             <div>
-                                <h3 class="text-sm font-semibold text-charcoal-main">Hydration Goal</h3>
-                                <p class="text-xs text-charcoal-muted"><span id="water-count">0</span> / 8 Glasses (2.0L)</p>
+                                <h3 class="text-sm font-semibold app-text-main">Hydration Goal</h3>
+                                <p class="text-xs app-text-muted"><span id="water-count">0</span> / <span id="water-goal-display">8</span> Glasses</p>
                             </div>
                         </div>
                         <div class="flex space-x-2">
-                            <button onclick="adjustWaterGlass(-1)" class="w-9 h-9 rounded-full bg-rose-soft hover:bg-gold-accent hover:text-white text-charcoal-main flex items-center justify-center font-semibold text-lg transition-all duration-200">
-                                -
-                            </button>
-                            <button onclick="adjustWaterGlass(1)" class="w-9 h-9 rounded-full bg-rose-soft hover:bg-gold-accent hover:text-white text-charcoal-main flex items-center justify-center font-semibold text-lg transition-all duration-200">
-                                +
-                            </button>
+                            <button onclick="adjustWaterGlass(-1)" class="w-9 h-9 rounded-full app-bg-soft app-text-main flex items-center justify-center font-semibold text-lg hover:app-bg-light transition-all duration-200">-</button>
+                            <button onclick="adjustWaterGlass(1)" class="w-9 h-9 rounded-full app-bg-soft app-text-main flex items-center justify-center font-semibold text-lg hover:app-bg-light transition-all duration-200">+</button>
                         </div>
                     </div>
-                    <!-- Water Progress Bubbles -->
-                    <div class="grid grid-cols-8 gap-1.5 pt-1" id="water-bubbles">
-                        <!-- Dynamic Bubbles -->
-                    </div>
+                    <div class="grid grid-cols-4 gap-2 pt-1" id="water-bubbles"></div>
                 </div>
 
-                <!-- Wellness Quick Check-Ins -->
+                <!-- Customizable Mind & Body Check-Ins -->
                 <div class="space-y-3">
-                    <h3 class="font-serif text-lg font-semibold text-charcoal-main">Mind & Body Check-in</h3>
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-serif text-lg font-semibold app-text-main">Mind & Body Check-in</h3>
+                        <button onclick="openAddCheckInModal()" class="text-xs app-text-accent font-medium hover:underline">+ Add Activity</button>
+                    </div>
                     <div class="grid grid-cols-2 gap-3" id="wellness-grid">
-                        <div onclick="toggleHabitItem('nap')" id="habit-nap" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-2xl">💤</span>
-                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-charcoal-main">Power Nap</p>
-                                <p class="text-[10px] text-charcoal-muted">20m restorative rest</p>
-                            </div>
-                        </div>
-
-                        <div onclick="toggleHabitItem('stretch')" id="habit-stretch" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-2xl">🧘‍♀️</span>
-                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-charcoal-main">Movement</p>
-                                <p class="text-[10px] text-charcoal-muted">Postural stretch</p>
-                            </div>
-                        </div>
-
-                        <div onclick="toggleHabitItem('walk')" id="habit-walk" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-2xl">🌿</span>
-                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-charcoal-main">Fresh Air Walk</p>
-                                <p class="text-[10px] text-charcoal-muted">Outdoor step break</p>
-                            </div>
-                        </div>
-
-                        <div onclick="toggleHabitItem('reflection')" id="habit-reflection" class="cursor-pointer p-4 rounded-2xl bg-cream-card border border-border-soft hover:border-gold-accent transition-all duration-200 flex flex-col justify-between space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-2xl">✨</span>
-                                <span class="habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]"></span>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-charcoal-main">Night Reflection</p>
-                                <p class="text-[10px] text-charcoal-muted">Acknowledge wins</p>
-                            </div>
-                        </div>
+                        <!-- Dynamic Check-Ins rendered via JS -->
                     </div>
                 </div>
             </section>
 
         </main>
 
-        <!-- Bottom Navigation Bar (Properly Sized Compact Icons) -->
-        <nav class="fixed bottom-0 max-w-[430px] w-full bg-cream-card/95 backdrop-blur-md border-t border-border-soft z-40 px-2 py-2">
+        <!-- Bottom Navigation Bar -->
+        <nav class="fixed bottom-0 max-w-[430px] w-full app-card/95 backdrop-blur-md border-t app-border-soft z-40 px-2 py-2 transition-colors duration-300">
             <div class="grid grid-cols-5 gap-0.5 text-center">
-                <button onclick="switchTab('schedule')" id="nav-schedule" class="py-1 flex flex-col items-center space-y-1 text-gold-accent tab-active">
+                <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn py-1 flex flex-col items-center space-y-1 tab-active">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     <span class="text-[10px] font-medium tracking-tight">Schedule</span>
                 </button>
-                <button onclick="switchTab('timer')" id="nav-timer" class="py-1 flex flex-col items-center space-y-1 text-charcoal-muted hover:text-gold-accent transition-colors">
+                <button onclick="switchTab('timer')" id="nav-timer" class="nav-btn py-1 flex flex-col items-center space-y-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span class="text-[10px] font-medium tracking-tight">Timer</span>
                 </button>
-                <button onclick="switchTab('subjects')" id="nav-subjects" class="py-1 flex flex-col items-center space-y-1 text-charcoal-muted hover:text-gold-accent transition-colors">
+                <button onclick="switchTab('subjects')" id="nav-subjects" class="nav-btn py-1 flex flex-col items-center space-y-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     <span class="text-[10px] font-medium tracking-tight">Subjects</span>
                 </button>
-                <button onclick="switchTab('history')" id="nav-history" class="py-1 flex flex-col items-center space-y-1 text-charcoal-muted hover:text-gold-accent transition-colors">
+                <button onclick="switchTab('history')" id="nav-history" class="nav-btn py-1 flex flex-col items-center space-y-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                     <span class="text-[10px] font-medium tracking-tight">History</span>
                 </button>
-                <button onclick="switchTab('habits')" id="nav-habits" class="py-1 flex flex-col items-center space-y-1 text-charcoal-muted hover:text-gold-accent transition-colors">
+                <button onclick="switchTab('habits')" id="nav-habits" class="nav-btn py-1 flex flex-col items-center space-y-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     <span class="text-[10px] font-medium tracking-tight">Balance</span>
                 </button>
             </div>
         </nav>
 
-        <!-- ALARM RINGING FULLSCREEN MODAL (Phone Alarm Style) -->
-        <div id="alarm-ringing-modal" class="fixed inset-0 bg-charcoal-main/90 backdrop-blur-md z-50 flex items-center justify-center px-4 hidden">
-            <div class="bg-cream-card w-full max-w-[360px] rounded-3xl p-8 shadow-2xl space-y-6 text-center fade-in border border-border-soft">
-                <div class="w-20 h-20 bg-gold-light rounded-full mx-auto flex items-center justify-center text-4xl text-gold-accent alarm-ringing-animation shadow-lg">⏰</div>
+        <!-- ALARM RINGING FULLSCREEN MODAL -->
+        <div id="alarm-ringing-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-50 flex items-center justify-center px-4 hidden">
+            <div class="app-card w-full max-w-[360px] rounded-3xl p-8 shadow-2xl space-y-6 text-center fade-in border app-border-soft">
+                <div class="w-20 h-20 app-bg-light rounded-full mx-auto flex items-center justify-center text-4xl app-text-accent alarm-ringing-animation shadow-lg">⏰</div>
                 <div class="space-y-2">
-                    <p class="text-xs uppercase tracking-[0.2em] font-bold text-gold-accent">Study Alarm Ringing</p>
-                    <h3 id="alarm-subject-name" class="font-serif text-2xl font-bold text-charcoal-main">Macroeconomics</h3>
-                    <p class="text-xs text-charcoal-muted">Time for your scheduled study block. Wake up and focus!</p>
+                    <p class="text-xs uppercase tracking-[0.2em] font-bold app-text-accent">Study Alarm Ringing</p>
+                    <h3 id="alarm-subject-name" class="font-serif text-2xl font-bold app-text-main">Macroeconomics</h3>
+                    <p class="text-xs app-text-muted">Time for your scheduled study block. Wake up and focus!</p>
                 </div>
-                <button onclick="dismissAlarmRinging()" class="w-full bg-gold-accent hover:bg-gold-hover text-white py-4 rounded-2xl font-semibold text-xs tracking-widest uppercase transition-all shadow-atelier">
+                <button onclick="dismissAlarmRinging()" class="w-full app-bg-accent text-white py-4 rounded-2xl font-semibold text-xs tracking-widest uppercase transition-all shadow-md">
                     Dismiss & Start Session
                 </button>
             </div>
         </div>
 
-        <!-- HEALTH BREAK PROMPT MODAL -->
-        <div id="break-modal" class="fixed inset-0 bg-charcoal-main/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
-            <div class="bg-cream-card w-full max-w-[360px] rounded-3xl p-6 shadow-2xl space-y-4 text-center fade-in border border-border-soft">
-                <div class="w-12 h-12 bg-gold-light rounded-2xl mx-auto flex items-center justify-center text-2xl text-gold-accent">✨</div>
-                <div>
-                    <h3 id="break-modal-title" class="font-serif text-xl font-semibold text-charcoal-main">Time for a Health Break</h3>
-                    <p id="break-modal-desc" class="text-xs text-charcoal-muted mt-1 leading-relaxed">Research shows taking a brief break to hydrate and stretch preserves long-term memory and prevents burnout.</p>
+        <!-- MODAL: ADD/EDIT CHECK-IN ACTIVITY -->
+        <div id="checkin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 id="checkin-modal-title" class="font-serif text-lg font-semibold app-text-main">Add Mind & Body Activity</h3>
+                    <button onclick="closeModal('checkin-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
                 </div>
-                <div class="grid grid-cols-3 gap-2 py-2">
-                    <button onclick="closeBreakModalWithAction('water')" class="p-3 rounded-2xl bg-cream border border-border-soft hover:border-gold-accent transition-all text-center">
-                        <span class="text-xl block mb-1">💧</span>
-                        <span class="text-[10px] font-semibold text-charcoal-main block">Drink Water</span>
+                <form onsubmit="handleSaveCheckIn(event)" class="space-y-3 text-xs">
+                    <input type="hidden" id="checkin-edit-id">
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Emoji Icon</label>
+                        <input type="text" id="checkin-emoji" value="🌿" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 text-center text-xl app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Activity Title</label>
+                        <input type="text" id="checkin-title" placeholder="e.g. Deep Breathing" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Short Description</label>
+                        <input type="text" id="checkin-desc" placeholder="e.g. 5 minutes box breathing" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
+                        Save Activity
                     </button>
-                    <button onclick="closeBreakModalWithAction('nap')" class="p-3 rounded-2xl bg-cream border border-border-soft hover:border-gold-accent transition-all text-center">
-                        <span class="text-xl block mb-1">💤</span>
-                        <span class="text-[10px] font-semibold text-charcoal-main block">Eye Nap</span>
-                    </button>
-                    <button onclick="closeBreakModalWithAction('stretch')" class="p-3 rounded-2xl bg-cream border border-border-soft hover:border-gold-accent transition-all text-center">
-                        <span class="text-xl block mb-1">🧘‍♀️</span>
-                        <span class="text-[10px] font-semibold text-charcoal-main block">Stretch</span>
-                    </button>
-                </div>
-                <button onclick="dismissBreakModal()" class="w-full bg-charcoal-main hover:bg-gold-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all shadow-atelier-sm">
-                    Resume Study Flow
-                </button>
+                </form>
             </div>
         </div>
 
-        <!-- MODAL 1: ADD SESSION -->
-        <div id="add-session-modal" class="fixed inset-0 bg-charcoal-main/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
-            <div class="bg-cream-card w-full max-w-[430px] rounded-t-3xl p-6 border-t border-border-soft shadow-2xl space-y-4 fade-in">
-                <div class="flex items-center justify-between border-b border-border-soft pb-3">
-                    <h3 class="font-serif text-lg font-semibold text-charcoal-main">Schedule Study Block</h3>
-                    <button onclick="closeModal('add-session-modal')" class="text-charcoal-muted hover:text-charcoal-main text-xl">✕</button>
+        <!-- MODAL: EXAM TARGET CONFIG -->
+        <div id="exam-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold app-text-main">Set Exam Countdown</h3>
+                    <button onclick="closeModal('exam-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
+                </div>
+                <form onsubmit="handleSaveExam(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Exam Name / Title</label>
+                        <input type="text" id="exam-name-input" placeholder="e.g. Finals Week, Board Exam" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Target Date</label>
+                        <input type="date" id="exam-date-input" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
+                        Start Countdown
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: ADD SESSION -->
+        <div id="add-session-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold app-text-main">Schedule Study Block</h3>
+                    <button onclick="closeModal('add-session-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
                 </div>
                 <form id="session-form" onsubmit="handleSaveSession(event)" class="space-y-3 text-xs">
                     <div>
-                        <label class="block font-medium text-charcoal-muted mb-1">Subject Name</label>
-                        <select id="session-subject-select" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
-                            <!-- Dynamic options -->
-                        </select>
+                        <label class="block font-medium app-text-muted mb-1">Subject Name</label>
+                        <select id="session-subject-select" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400"></select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block font-medium text-charcoal-muted mb-1">Date</label>
-                            <input type="date" id="session-date" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                            <label class="block font-medium app-text-muted mb-1">Date</label>
+                            <input type="date" id="session-date" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
                         </div>
                         <div>
-                            <label class="block font-medium text-charcoal-muted mb-1">Start Time</label>
-                            <input type="time" id="session-time" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                            <label class="block font-medium app-text-muted mb-1">Start Time</label>
+                            <input type="time" id="session-time" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block font-medium text-charcoal-muted mb-1">Duration (Mins)</label>
-                            <input type="number" id="session-duration" min="5" max="300" value="30" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                            <label class="block font-medium app-text-muted mb-1">Duration (Mins)</label>
+                            <input type="number" id="session-duration" min="5" max="300" value="30" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
                         </div>
                         <div>
-                            <label class="block font-medium text-charcoal-muted mb-1">Priority Level</label>
-                            <select id="session-priority" class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                            <label class="block font-medium app-text-muted mb-1">Priority Level</label>
+                            <select id="session-priority" class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
                                 <option value="High">High Priority</option>
                                 <option value="Medium" selected>Medium Priority</option>
                                 <option value="Low">Low Priority</option>
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-gold-accent hover:bg-gold-hover text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-atelier-sm">
+                    <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
                         Confirm Session & Alarm
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- MODAL 2: ADD SUBJECT -->
-        <div id="add-subject-modal" class="fixed inset-0 bg-charcoal-main/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
-            <div class="bg-cream-card w-full max-w-[430px] rounded-t-3xl p-6 border-t border-border-soft shadow-2xl space-y-4 fade-in">
-                <div class="flex items-center justify-between border-b border-border-soft pb-3">
-                    <h3 class="font-serif text-lg font-semibold text-charcoal-main">Add New Subject</h3>
-                    <button onclick="closeModal('add-subject-modal')" class="text-charcoal-muted hover:text-charcoal-main text-xl">✕</button>
+        <!-- MODAL: ADD SUBJECT -->
+        <div id="add-subject-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold app-text-main">Add New Subject</h3>
+                    <button onclick="closeModal('add-subject-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
                 </div>
                 <form onsubmit="handleSaveSubject(event)" class="space-y-3 text-xs">
                     <div>
-                        <label class="block font-medium text-charcoal-muted mb-1">Subject Title</label>
-                        <input type="text" id="subject-title-input" placeholder="e.g. Organic Chemistry, Macroeconomics" required class="w-full bg-cream border border-border-soft rounded-xl p-2.5 text-charcoal-main focus:outline-none focus:border-gold-accent">
+                        <label class="block font-medium app-text-muted mb-1">Subject Title</label>
+                        <input type="text" id="subject-title-input" placeholder="e.g. Organic Chemistry, Macroeconomics" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
                     </div>
                     <div>
-                        <label class="block font-medium text-charcoal-muted mb-1">Theme Accent Color</label>
+                        <label class="block font-medium app-text-muted mb-1">Theme Accent Color</label>
                         <div class="flex space-x-2 pt-1">
-                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#D46A88" checked class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#D46A88] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
-                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#E598A8" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#E598A8] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
-                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#A8C5B2" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#A8C5B2] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
-                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#A2B5C8" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#A2B5C8] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-charcoal-main"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#D46A88" checked class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#D46A88] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#E598A8" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#E598A8] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#5B9A74" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#5B9A74] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#5B85AA" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#5B85AA] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="subject-color" value="#8A75AF" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#8A75AF] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-charcoal-main hover:bg-gold-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-atelier-sm">
+                    <button type="submit" class="w-full bg-slate-800 text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
                         Create Module
                     </button>
                 </form>
             </div>
         </div>
 
+        <!-- MODAL: EDIT SUBJECT -->
+        <div id="edit-subject-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold app-text-main">Edit Subject Module</h3>
+                    <button onclick="closeModal('edit-subject-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
+                </div>
+                <form onsubmit="handleUpdateSubject(event)" class="space-y-3 text-xs">
+                    <input type="hidden" id="edit-subject-id">
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Subject Title</label>
+                        <input type="text" id="edit-subject-title-input" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Theme Accent Color</label>
+                        <div class="flex space-x-2 pt-1">
+                            <label class="cursor-pointer"><input type="radio" name="edit-subject-color" value="#D46A88" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#D46A88] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="edit-subject-color" value="#E598A8" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#E598A8] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="edit-subject-color" value="#5B9A74" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#5B9A74] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="edit-subject-color" value="#5B85AA" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#5B85AA] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                            <label class="cursor-pointer"><input type="radio" name="edit-subject-color" value="#8A75AF" class="hidden peer"><span class="w-6 h-6 rounded-full bg-[#8A75AF] inline-block peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-slate-800"></span></label>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-800 text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: SETTINGS & PERSONALIZATION -->
+        <div id="settings-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in max-h-[85vh] overflow-y-auto">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold app-text-main">App Personalization & Settings</h3>
+                    <button onclick="closeModal('settings-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
+                </div>
+
+                <div class="space-y-4 text-xs">
+                    <!-- Theme Selector -->
+                    <div>
+                        <label class="block font-medium app-text-muted mb-2">Pastel Theme Vibe</label>
+                        <div class="grid grid-cols-5 gap-2 text-center">
+                            <button type="button" onclick="setTheme('rose')" class="p-2 rounded-xl border app-border-soft flex flex-col items-center space-y-1 hover:border-emerald-400">
+                                <span class="w-6 h-6 rounded-full bg-[#D46A88] inline-block"></span>
+                                <span class="text-[10px]">Rose</span>
+                            </button>
+                            <button type="button" onclick="setTheme('lavender')" class="p-2 rounded-xl border app-border-soft flex flex-col items-center space-y-1 hover:border-emerald-400">
+                                <span class="w-6 h-6 rounded-full bg-[#8A75AF] inline-block"></span>
+                                <span class="text-[10px]">Lavender</span>
+                            </button>
+                            <button type="button" onclick="setTheme('mint')" class="p-2 rounded-xl border app-border-soft flex flex-col items-center space-y-1 hover:border-emerald-400">
+                                <span class="w-6 h-6 rounded-full bg-[#5B9A74] inline-block"></span>
+                                <span class="text-[10px]">Mint</span>
+                            </button>
+                            <button type="button" onclick="setTheme('peach')" class="p-2 rounded-xl border app-border-soft flex flex-col items-center space-y-1 hover:border-emerald-400">
+                                <span class="w-6 h-6 rounded-full bg-[#E07A5F] inline-block"></span>
+                                <span class="text-[10px]">Peach</span>
+                            </button>
+                            <button type="button" onclick="setTheme('sky')" class="p-2 rounded-xl border app-border-soft flex flex-col items-center space-y-1 hover:border-emerald-400">
+                                <span class="w-6 h-6 rounded-full bg-[#5B85AA] inline-block"></span>
+                                <span class="text-[10px]">Sky</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Water Goal Customization -->
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Daily Water Goal (Glasses)</label>
+                        <select id="setting-water-goal" onchange="updateWaterGoal(this.value)" class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                            <option value="4">4 Glasses (1.0L)</option>
+                            <option value="6">6 Glasses (1.5L)</option>
+                            <option value="8" selected>8 Glasses (2.0L)</option>
+                            <option value="10">10 Glasses (2.5L)</option>
+                            <option value="12">12 Glasses (3.0L)</option>
+                        </select>
+                    </div>
+
+                    <!-- Default Timer Duration -->
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Default Study Duration</label>
+                        <select id="setting-default-timer" onchange="updateDefaultTimer(this.value)" class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                            <option value="15">15 Minutes</option>
+                            <option value="25">25 Minutes (Pomodoro)</option>
+                            <option value="30" selected>30 Minutes (Standard)</option>
+                            <option value="45">45 Minutes (Deep Work)</option>
+                            <option value="60">60 Minutes (Full Hour)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="closeModal('settings-modal')" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
+                        Apply Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Application Script Logic -->
+    <!-- Script Logic -->
     <script>
-        const STORAGE_KEY = 'SHENA_STUDY_STATE_V4';
+        const pastelThemes = {
+            rose: { cream: '#FFF5F7', card: '#FFFFFF', accent: '#D46A88', hover: '#C25674', light: '#FCE8EE', nude: '#F5D6DF', soft: '#FBE4EC', charcoal: '#2E2528', muted: '#8C787E', border: '#F0D6DE' },
+            lavender: { cream: '#F7F5FF', card: '#FFFFFF', accent: '#8A75AF', hover: '#745F9A', light: '#EBE4F7', nude: '#D8CEF0', soft: '#E6DCF5', charcoal: '#2A2530', muted: '#7B708A', border: '#DCD0F0' },
+            mint: { cream: '#F2F9F5', card: '#FFFFFF', accent: '#5B9A74', hover: '#4A8361', light: '#D8EFE2', nude: '#C2E5D0', soft: '#E2F4E8', charcoal: '#222E26', muted: '#6F8575', border: '#BFE2CC' },
+            peach: { cream: '#FFF9F5', card: '#FFFFFF', accent: '#E07A5F', hover: '#C9684F', light: '#FCE4D6', nude: '#F7D0BD', soft: '#FCECE4', charcoal: '#332724', muted: '#8F7B75', border: '#F2CBC0' },
+            sky: { cream: '#F2F6F9', card: '#FFFFFF', accent: '#5B85AA', hover: '#497193', light: '#D6E4F0', nude: '#BDD4E6', soft: '#E4EFEF', charcoal: '#232A30', muted: '#70808F', border: '#BCCFD9' }
+        };
+
+        const STORAGE_KEY = 'SHENA_STUDY_STATE_V8';
 
         let appState = {
+            theme: 'rose',
+            streak: { count: 1, lastDate: '' },
+            exam: { name: '', date: '' },
+            scratchpad: '',
             subjects: [
-                { id: 'sub_1', title: 'Macroeconomics', color: '#D46A88', tasks: [{ id: 't1', text: 'Review Chapter 4 Inflation Models', done: false }, { id: 't2', text: 'Active Recall: Fiscal Multiplier', done: true }] },
-                { id: 'sub_2', title: 'Biochemistry', color: '#E598A8', tasks: [{ id: 't1', text: 'Memorize Krebs Cycle Enzymes', done: false }] }
+                { id: 'sub_1', title: 'Macroeconomics', color: '#D46A88', tasks: [{ id: 't1', text: 'Review Chapter 4 Inflation Models', done: false }] },
+                { id: 'sub_2', title: 'Biochemistry', color: '#8A75AF', tasks: [{ id: 't1', text: 'Memorize Krebs Cycle Enzymes', done: false }] }
             ],
             sessions: [
                 { id: 'ses_1', subjectId: 'sub_1', date: new Date().toISOString().split('T')[0], time: '18:00', duration: 30, priority: 'High', status: 'scheduled', remainingSeconds: 30 * 60, reminded: false }
             ],
             habits: {
                 waterGlasses: 0,
-                nap: false,
-                stretch: false,
-                walk: false,
-                reflection: false,
+                waterGoal: 8,
+                defaultTimerMinutes: 30,
                 lastResetDate: new Date().toISOString().split('T')[0]
-            }
+            },
+            checkIns: [
+                { id: 'ci_1', emoji: '💤', title: 'Power Nap', desc: '20m restorative rest', done: false },
+                { id: 'ci_2', emoji: '🧘‍♀️', title: 'Movement', desc: 'Postural stretch', done: false },
+                { id: 'ci_3', emoji: '🌿', title: 'Fresh Air Walk', desc: 'Outdoor step break', done: false },
+                { id: 'ci_4', emoji: '✨', title: 'Night Reflection', desc: 'Acknowledge wins', done: false }
+            ]
         };
 
-        // Timer Variables
         let timerInterval = null;
         let timerTotalSeconds = 30 * 60;
         let timerRemainingSeconds = 30 * 60;
         let isTimerRunning = false;
-        let activeTimerMode = 'study'; // 'study' or 'break'
+        let activeTimerMode = 'study';
         let currentTimerSessionId = null;
         let currentHistoryFilter = 'inprogress';
 
-        // Alarm Ringing Loop Variables
         let alarmRingingInterval = null;
         let currentRingingSessionId = null;
         let globalAudioCtx = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             loadStateFromStorage();
+            processStreakOnLoad();
+            applyThemePalette(appState.theme || 'rose');
             initDateHeader();
             renderAll();
             initDefaultInputs();
@@ -540,13 +709,16 @@
             if (saved) {
                 try {
                     appState = JSON.parse(saved);
+                    if (!appState.theme) appState.theme = 'rose';
+                    if (!appState.streak) appState.streak = { count: 1, lastDate: '' };
+                    if (!appState.checkIns) appState.checkIns = [];
+                    if (!appState.habits.waterGoal) appState.habits.waterGoal = 8;
+                    if (!appState.habits.defaultTimerMinutes) appState.habits.defaultTimerMinutes = 30;
+
                     const today = new Date().toISOString().split('T')[0];
                     if (appState.habits.lastResetDate !== today) {
                         appState.habits.waterGlasses = 0;
-                        appState.habits.nap = false;
-                        appState.habits.stretch = false;
-                        appState.habits.walk = false;
-                        appState.habits.reflection = false;
+                        appState.checkIns.forEach(c => c.done = false);
                         appState.habits.lastResetDate = today;
                         saveState();
                     }
@@ -560,6 +732,58 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
         }
 
+        function processStreakOnLoad() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (!appState.streak.lastDate) {
+                appState.streak.count = 1;
+                appState.streak.lastDate = todayStr;
+            } else if (appState.streak.lastDate !== todayStr) {
+                const last = new Date(appState.streak.lastDate);
+                const now = new Date(todayStr);
+                const diffTime = now - last;
+                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    appState.streak.count++;
+                    appState.streak.lastDate = todayStr;
+                    showToast(`🔥 Daily Streak Increased! Day ${appState.streak.count}!`);
+                } else if (diffDays > 1) {
+                    appState.streak.count = 1;
+                    appState.streak.lastDate = todayStr;
+                    showToast(`Streak reset. Starting fresh today!`);
+                }
+            }
+            saveState();
+            document.getElementById('header-streak-count').innerText = appState.streak.count;
+        }
+
+        function showStreakInfo() {
+            showToast(`🔥 You are on a ${appState.streak.count}-day study streak! Keep opening daily to grow it!`);
+        }
+
+        function setTheme(themeKey) {
+            appState.theme = themeKey;
+            saveState();
+            applyThemePalette(themeKey);
+            showToast(`Theme changed to ${themeKey.toUpperCase()}!`);
+            closeModal('settings-modal');
+        }
+
+        function applyThemePalette(themeKey) {
+            const t = pastelThemes[themeKey] || pastelThemes.rose;
+            const root = document.documentElement;
+            root.style.setProperty('--bg-cream', t.cream);
+            root.style.setProperty('--bg-card', t.card);
+            root.style.setProperty('--color-accent', t.accent);
+            root.style.setProperty('--color-hover', t.hover);
+            root.style.setProperty('--bg-light', t.light);
+            root.style.setProperty('--bg-nude', t.nude);
+            root.style.setProperty('--bg-soft', t.soft);
+            root.style.setProperty('--color-charcoal', t.charcoal);
+            root.style.setProperty('--color-muted', t.muted);
+            root.style.setProperty('--border-soft', t.border);
+        }
+
         function initDateHeader() {
             const options = { weekday: 'short', month: 'short', day: 'numeric' };
             document.getElementById('header-date').innerText = new Date().toLocaleDateString('en-US', options).toUpperCase();
@@ -568,29 +792,71 @@
         function initDefaultInputs() {
             const todayStr = new Date().toISOString().split('T')[0];
             document.getElementById('session-date').value = todayStr;
+            const defMins = appState.habits.defaultTimerMinutes || 30;
+            document.getElementById('session-duration').value = defMins;
+            document.getElementById('setting-water-goal').value = appState.habits.waterGoal || 8;
+            document.getElementById('setting-default-timer').value = defMins;
+            document.getElementById('study-scratchpad').value = appState.scratchpad || '';
+
+            if (appState.exam && appState.exam.date) {
+                document.getElementById('exam-name-input').value = appState.exam.name;
+                document.getElementById('exam-date-input').value = appState.exam.date;
+                updateExamCountdownDisplay();
+            }
+
             const now = new Date();
             now.setMinutes(now.getMinutes() + 15);
             document.getElementById('session-time').value = now.toTimeString().substring(0, 5);
         }
 
+        function updateExamCountdownDisplay() {
+            if (!appState.exam || !appState.exam.date) return;
+            const now = new Date();
+            const target = new Date(appState.exam.date);
+            const diffTime = target - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            document.getElementById('exam-title-display').innerText = appState.exam.name;
+            if (diffDays > 0) {
+                document.getElementById('exam-days-display').innerText = `${diffDays} days remaining until exam`;
+            } else if (diffDays === 0) {
+                document.getElementById('exam-days-display').innerText = `Exam is TODAY! Good luck!`;
+            } else {
+                document.getElementById('exam-days-display').innerText = `Exam date has passed`;
+            }
+        }
+
+        function handleSaveExam(e) {
+            e.preventDefault();
+            const name = document.getElementById('exam-name-input').value.trim();
+            const date = document.getElementById('exam-date-input').value;
+            appState.exam = { name, date };
+            saveState();
+            updateExamCountdownDisplay();
+            closeModal('exam-modal');
+            showToast("Exam countdown updated!");
+        }
+
+        function saveScratchpad(val) {
+            appState.scratchpad = val;
+            saveState();
+        }
+
+        /* REFACTORED TAB SWITCHER (EXPLICIT CLEANUP FIX) */
         function switchTab(tabKey) {
             const tabs = ['schedule', 'timer', 'subjects', 'history', 'habits'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                const navEl = document.getElementById(`nav-${t}`);
-                if (t === tabKey) {
+            tabs.forEach(tk => {
+                const el = document.getElementById(`tab-${tk}`);
+                const navEl = document.getElementById(`nav-${tk}`);
+                if (tk === tabKey) {
                     el.classList.remove('hidden');
-                    navEl.classList.add('tab-active', 'text-gold-accent');
-                    navEl.classList.remove('text-charcoal-muted');
+                    navEl.classList.add('tab-active');
                 } else {
                     el.classList.add('hidden');
-                    navEl.classList.remove('tab-active', 'text-gold-accent');
-                    navEl.classList.add('text-charcoal-muted');
+                    navEl.classList.remove('tab-active');
                 }
             });
-            if (tabKey === 'history') {
-                renderHistory();
-            }
+            if (tabKey === 'history') renderHistory();
         }
 
         function renderAll() {
@@ -598,56 +864,51 @@
             renderSubjects();
             renderSubjectSelectOptions();
             renderWaterTracker();
-            renderHabitCheckboxes();
+            renderCheckIns();
             renderHistory();
         }
 
         function renderSchedule() {
             const container = document.getElementById('schedule-list');
             container.innerHTML = '';
-
             const scheduledSessions = appState.sessions.filter(s => !s.status || s.status === 'scheduled');
 
             if (scheduledSessions.length === 0) {
                 container.innerHTML = `
-                            <div class="text-center py-10 bg-cream-card rounded-2xl border border-border-soft">
-                                <p class="text-xs text-charcoal-muted">No upcoming scheduled study blocks.</p>
-                                <button onclick="openModal('add-session-modal')" class="mt-3 text-gold-accent text-xs font-semibold underline">Plan your next session</button>
-                            </div>
-                        `;
+                        <div class="text-center py-10 app-card rounded-2xl border app-border-soft">
+                            <p class="text-xs app-text-muted">No upcoming scheduled study blocks.</p>
+                            <button onclick="openModal('add-session-modal')" class="mt-3 app-text-accent text-xs font-semibold underline">Plan your next session</button>
+                        </div>
+                    `;
                 return;
             }
 
             scheduledSessions.forEach(ses => {
-                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: '#D46A88' };
+                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: 'var(--color-accent)' };
                 const isToday = ses.date === new Date().toISOString().split('T')[0];
                 const dateLabel = isToday ? 'Today' : ses.date;
 
                 const item = document.createElement('div');
-                item.className = 'bg-cream-card p-4 rounded-2xl border border-border-soft shadow-atelier-sm flex items-center justify-between transition-all';
+                item.className = 'app-card p-4 rounded-2xl border app-border-soft shadow-sm flex items-center justify-between transition-all';
                 item.innerHTML = `
-                            <div class="flex items-start space-x-3">
-                                <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
-                                <div>
-                                    <h4 class="font-serif text-base font-semibold text-charcoal-main">${sub.title}</h4>
-                                    <div class="flex items-center space-x-2 text-[11px] text-charcoal-muted mt-0.5">
-                                        <span>📅 ${dateLabel} at ${ses.time}</span>
-                                        <span>•</span>
-                                        <span>⏳ ${ses.duration}m</span>
-                                        <span>•</span>
-                                        <span class="px-1.5 py-0.5 rounded-md bg-rose-soft text-charcoal-main font-medium">${ses.priority}</span>
-                                    </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
+                            <div>
+                                <h4 class="font-serif text-base font-semibold app-text-main">${sub.title}</h4>
+                                <div class="flex items-center space-x-2 text-[11px] app-text-muted mt-0.5">
+                                    <span>📅 ${dateLabel} at ${ses.time}</span>
+                                    <span>•</span>
+                                    <span>⏳ ${ses.duration}m</span>
+                                    <span>•</span>
+                                    <span class="px-1.5 py-0.5 rounded-md app-bg-soft app-text-main font-medium">${ses.priority}</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-charcoal-main text-white rounded-xl text-xs font-medium hover:bg-gold-accent transition-all shadow-atelier-sm">
-                                    Start
-                                </button>
-                                <button onclick="deleteSession('${ses.id}')" class="p-1.5 text-charcoal-muted hover:text-red-500 transition-all text-sm">
-                                    ✕
-                                </button>
-                            </div>
-                        `;
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-medium transition-all shadow-sm">Start</button>
+                            <button onclick="deleteSession('${ses.id}')" class="p-1.5 app-text-muted hover:text-red-500 transition-all text-sm">✕</button>
+                        </div>
+                    `;
                 container.appendChild(item);
             });
         }
@@ -657,42 +918,43 @@
             container.innerHTML = '';
 
             if (appState.subjects.length === 0) {
-                container.innerHTML = '<p class="text-xs text-charcoal-muted text-center py-6">No subjects created yet.</p>';
+                container.innerHTML = '<p class="text-xs app-text-muted text-center py-6">No subjects created yet.</p>';
                 return;
             }
 
             appState.subjects.forEach(sub => {
                 const card = document.createElement('div');
-                card.className = 'bg-cream-card rounded-2xl p-4 border border-border-soft shadow-atelier-sm space-y-3';
+                card.className = 'app-card rounded-2xl p-4 border app-border-soft shadow-sm space-y-3';
 
                 let tasksHtml = '';
                 sub.tasks.forEach(task => {
                     tasksHtml += `
-                                <div class="flex items-center justify-between py-1.5 border-b border-border-soft/60 last:border-0">
-                                    <label class="flex items-center space-x-2.5 cursor-pointer flex-1">
-                                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone('${sub.id}', '${task.id}')" class="rounded border-border-soft text-gold-accent focus:ring-0 w-4 h-4 cursor-pointer">
-                                        <span class="text-xs ${task.done ? 'line-through text-charcoal-muted' : 'text-charcoal-main'}">${task.text}</span>
-                                    </label>
-                                    <button onclick="deleteTask('${sub.id}', '${task.id}')" class="text-[10px] text-charcoal-muted hover:text-red-500 px-1">✕</button>
-                                </div>
-                            `;
+                            <div class="flex items-center justify-between py-1.5 border-b app-border-soft/60 last:border-0">
+                                <label class="flex items-center space-x-2.5 cursor-pointer flex-1">
+                                    <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone('${sub.id}', '${task.id}')" class="rounded app-border-soft app-text-accent focus:ring-0 w-4 h-4 cursor-pointer">
+                                    <span class="text-xs ${task.done ? 'line-through app-text-muted' : 'app-text-main'}">${task.text}</span>
+                                </label>
+                                <button onclick="deleteTask('${sub.id}', '${task.id}')" class="text-[10px] app-text-muted hover:text-red-500 px-1">✕</button>
+                            </div>
+                        `;
                 });
 
                 card.innerHTML = `
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-2">
-                                    <span class="w-3 h-3 rounded-full" style="background-color: ${sub.color}"></span>
-                                    <h3 class="font-serif font-semibold text-base text-charcoal-main">${sub.title}</h3>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="promptAddTask('${sub.id}')" class="text-[11px] text-gold-accent font-medium hover:underline">+ Add Task</button>
-                                    <button onclick="deleteSubject('${sub.id}')" class="text-charcoal-muted hover:text-red-500 text-xs">✕</button>
-                                </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full" style="background-color: ${sub.color}"></span>
+                                <h3 class="font-serif font-semibold text-base app-text-main">${sub.title}</h3>
                             </div>
-                            <div class="bg-cream rounded-xl p-3 space-y-1">
-                                ${tasksHtml || '<p class="text-[11px] text-charcoal-muted text-center py-1">No active recall tasks added yet.</p>'}
+                            <div class="flex items-center space-x-2">
+                                <button onclick="promptAddTask('${sub.id}')" class="text-[11px] app-text-accent font-medium hover:underline">+ Task</button>
+                                <button onclick="openEditSubjectModal('${sub.id}')" class="text-[11px] app-text-muted hover:app-text-accent px-1" title="Edit Subject">✏️</button>
+                                <button onclick="deleteSubject('${sub.id}')" class="app-text-muted hover:text-red-500 text-xs">✕</button>
                             </div>
-                        `;
+                        </div>
+                        <div class="app-bg rounded-xl p-3 space-y-1">
+                            ${tasksHtml || '<p class="text-[11px] app-text-muted text-center py-1">No active recall tasks added yet.</p>'}
+                        </div>
+                    `;
                 container.appendChild(card);
             });
         }
@@ -710,46 +972,129 @@
 
         function renderWaterTracker() {
             const count = appState.habits.waterGlasses;
+            const goal = appState.habits.waterGoal || 8;
             document.getElementById('water-count').innerText = count;
+            document.getElementById('water-goal-display').innerText = goal;
 
             const bubblesContainer = document.getElementById('water-bubbles');
             bubblesContainer.innerHTML = '';
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= goal; i++) {
                 const bubble = document.createElement('div');
                 const filled = i <= count;
-                bubble.className = `h-7 rounded-xl flex items-center justify-center text-xs transition-all duration-300 ${filled ? 'bg-gold-accent text-white shadow-atelier-sm scale-105' : 'bg-rose-soft/50 text-charcoal-muted border border-border-soft'}`;
+                bubble.className = `h-7 rounded-xl flex items-center justify-center text-xs transition-all duration-300 ${filled ? 'app-bg-accent text-white shadow-sm scale-105' : 'app-bg-soft app-text-muted border app-border-soft'}`;
                 bubble.innerHTML = filled ? '💧' : i;
                 bubblesContainer.appendChild(bubble);
             }
         }
 
-        function renderHabitCheckboxes() {
-            const habits = appState.habits;
-            const keys = ['nap', 'stretch', 'walk', 'reflection'];
-            keys.forEach(k => {
-                const el = document.getElementById(`habit-${k}`);
-                const checkEl = el.querySelector('.habit-check');
-                if (habits[k]) {
-                    el.classList.add('border-gold-accent', 'bg-gold-light/40');
-                    checkEl.className = 'habit-check w-5 h-5 rounded-full bg-gold-accent text-white flex items-center justify-center text-[10px]';
-                    checkEl.innerHTML = '✓';
-                } else {
-                    el.classList.remove('border-gold-accent', 'bg-gold-light/40');
-                    checkEl.className = 'habit-check w-5 h-5 rounded-full border border-border-soft flex items-center justify-center text-[10px]';
-                    checkEl.innerHTML = '';
-                }
+        function renderCheckIns() {
+            const grid = document.getElementById('wellness-grid');
+            grid.innerHTML = '';
+
+            if (appState.checkIns.length === 0) {
+                grid.innerHTML = '<p class="text-xs app-text-muted col-span-2 text-center py-4">No activities added yet. Click "+ Add Activity".</p>';
+                return;
+            }
+
+            appState.checkIns.forEach(ci => {
+                const card = document.createElement('div');
+                const isDone = ci.done;
+                card.className = `cursor-pointer p-4 rounded-2xl app-card border transition-all duration-200 flex flex-col justify-between space-y-3 ${isDone ? 'border-emerald-400 app-bg-light/40' : 'app-border-soft hover:border-emerald-400'}`;
+                card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl">${ci.emoji}</span>
+                            <div class="flex items-center space-x-1.5">
+                                <button onclick="event.stopPropagation(); openEditCheckInModal('${ci.id}')" class="text-[10px] app-text-muted hover:app-text-accent" title="Edit">✏️</button>
+                                <button onclick="event.stopPropagation(); deleteCheckIn('${ci.id}')" class="text-[10px] app-text-muted hover:text-red-500" title="Delete">✕</button>
+                                <span class="w-5 h-5 rounded-full border app-border-soft flex items-center justify-center text-[10px] ${isDone ? 'app-bg-accent text-white border-transparent' : ''}">${isDone ? '✓' : ''}</span>
+                            </div>
+                        </div>
+                        <div onclick="toggleCheckIn('${ci.id}')">
+                            <p class="text-xs font-semibold app-text-main">${ci.title}</p>
+                            <p class="text-[10px] app-text-muted">${ci.desc}</p>
+                        </div>
+                    `;
+                grid.appendChild(card);
             });
         }
 
-        /* HISTORY RENDERING & FILTERING */
+        function toggleCheckIn(id) {
+            const ci = appState.checkIns.find(c => c.id === id);
+            if (ci) {
+                ci.done = !ci.done;
+                saveState();
+                renderCheckIns();
+            }
+        }
+
+        function openAddCheckInModal() {
+            document.getElementById('checkin-edit-id').value = '';
+            document.getElementById('checkin-emoji').value = '🌿';
+            document.getElementById('checkin-title').value = '';
+            document.getElementById('checkin-desc').value = '';
+            document.getElementById('checkin-modal-title').innerText = 'Add Mind & Body Activity';
+            openModal('checkin-modal');
+        }
+
+        function openEditCheckInModal(id) {
+            const ci = appState.checkIns.find(c => c.id === id);
+            if (ci) {
+                document.getElementById('checkin-edit-id').value = ci.id;
+                document.getElementById('checkin-emoji').value = ci.emoji;
+                document.getElementById('checkin-title').value = ci.title;
+                document.getElementById('checkin-desc').value = ci.desc;
+                document.getElementById('checkin-modal-title').innerText = 'Edit Activity';
+                openModal('checkin-modal');
+            }
+        }
+
+        function handleSaveCheckIn(e) {
+            e.preventDefault();
+            const id = document.getElementById('checkin-edit-id').value;
+            const emoji = document.getElementById('checkin-emoji').value.trim() || '🌿';
+            const title = document.getElementById('checkin-title').value.trim();
+            const desc = document.getElementById('checkin-desc').value.trim();
+
+            if (!title) return;
+
+            if (id) {
+                const ci = appState.checkIns.find(c => c.id === id);
+                if (ci) {
+                    ci.emoji = emoji;
+                    ci.title = title;
+                    ci.desc = desc;
+                }
+            } else {
+                appState.checkIns.push({
+                    id: 'ci_' + Date.now(),
+                    emoji,
+                    title,
+                    desc,
+                    done: false
+                });
+            }
+
+            saveState();
+            renderCheckIns();
+            closeModal('checkin-modal');
+            showToast("Activity saved successfully!");
+        }
+
+        function deleteCheckIn(id) {
+            appState.checkIns = appState.checkIns.filter(c => c.id !== id);
+            saveState();
+            renderCheckIns();
+            showToast("Activity removed.");
+        }
+
         function switchHistoryFilter(filter) {
             currentHistoryFilter = filter;
             ['inprogress', 'unfinish', 'finish'].forEach(f => {
                 const btn = document.getElementById(`filter-${f}`);
                 if (f === filter) {
-                    btn.className = 'flex-1 py-2 rounded-xl text-center transition-all bg-cream-card text-charcoal-main shadow-atelier-sm font-semibold';
+                    btn.className = 'flex-1 py-2 rounded-xl text-center transition-all app-card app-text-main shadow-sm font-semibold';
                 } else {
-                    btn.className = 'flex-1 py-2 rounded-xl text-center transition-all text-charcoal-muted';
+                    btn.className = 'flex-1 py-2 rounded-xl text-center transition-all app-text-muted';
                 }
             });
             renderHistory();
@@ -770,61 +1115,88 @@
 
             if (filteredSessions.length === 0) {
                 container.innerHTML = `
-                            <div class="text-center py-10 bg-cream-card rounded-2xl border border-border-soft">
-                                <p class="text-xs text-charcoal-muted">No sessions found in "${currentHistoryFilter.toUpperCase()}" status.</p>
-                            </div>
-                        `;
+                        <div class="text-center py-10 app-card rounded-2xl border app-border-soft">
+                            <p class="text-xs app-text-muted">No sessions found in "${currentHistoryFilter.toUpperCase()}" status.</p>
+                        </div>
+                    `;
                 return;
             }
 
             filteredSessions.forEach(ses => {
-                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: '#D46A88' };
+                const sub = appState.subjects.find(s => s.id === ses.subjectId) || { title: 'Study Session', color: 'var(--color-accent)' };
                 const remainingMins = Math.ceil((ses.remainingSeconds || (ses.duration * 60)) / 60);
 
                 const item = document.createElement('div');
-                item.className = 'bg-cream-card p-4 rounded-2xl border border-border-soft shadow-atelier-sm flex items-center justify-between transition-all';
+                item.className = 'app-card p-4 rounded-2xl border app-border-soft shadow-sm flex items-center justify-between transition-all';
                 item.innerHTML = `
-                            <div class="flex items-start space-x-3">
-                                <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
-                                <div>
-                                    <h4 class="font-serif text-base font-semibold text-charcoal-main">${sub.title}</h4>
-                                    <div class="flex items-center space-x-2 text-[11px] text-charcoal-muted mt-0.5">
-                                        <span class="uppercase tracking-wide font-medium text-gold-accent">[${ses.status}]</span>
-                                        <span>•</span>
-                                        <span>Remaining: ${remainingMins}m</span>
-                                    </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
+                            <div>
+                                <h4 class="font-serif text-base font-semibold app-text-main">${sub.title}</h4>
+                                <div class="flex items-center space-x-2 text-[11px] app-text-muted mt-0.5">
+                                    <span class="uppercase tracking-wide font-medium app-text-accent">[${ses.status}]</span>
+                                    <span class="text-[10px]">•</span>
+                                    <span>Remaining: ${remainingMins}m</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-charcoal-main text-white rounded-xl text-xs font-medium hover:bg-gold-accent transition-all shadow-atelier-sm">
-                                    Resume
-                                </button>
-                            </div>
-                        `;
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-medium transition-all shadow-sm">Resume</button>
+                        </div>
+                    `;
                 container.appendChild(item);
             });
         }
 
-        /* WATER & HABIT ACTIONS */
         function adjustWaterGlass(amount) {
-            appState.habits.waterGlasses = Math.max(0, appState.habits.waterGlasses + amount);
+            const goal = appState.habits.waterGoal || 8;
+            appState.habits.waterGlasses = Math.max(0, Math.min(goal, appState.habits.waterGlasses + amount));
             saveState();
             renderWaterTracker();
         }
 
-        function toggleHabitItem(key) {
-            appState.habits[key] = !appState.habits[key];
-            saveState();
-            renderHabitCheckboxes();
-        }
-
-        /* SESSION & SUBJECT MODALS */
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
+        }
+
+        function openEditSubjectModal(subjectId) {
+            const sub = appState.subjects.find(s => s.id === subjectId);
+            if (sub) {
+                document.getElementById('edit-subject-id').value = sub.id;
+                document.getElementById('edit-subject-title-input').value = sub.title;
+                const radios = document.getElementsByName('edit-subject-color');
+                for (const r of radios) {
+                    r.checked = (r.value === sub.color);
+                }
+                openModal('edit-subject-modal');
+            }
+        }
+
+        function handleUpdateSubject(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-subject-id').value;
+            const title = document.getElementById('edit-subject-title-input').value.trim();
+            const radios = document.getElementsByName('edit-subject-color');
+            let color = 'var(--color-accent)';
+            for (const r of radios) {
+                if (r.checked) color = r.value;
+            }
+
+            if (!title) return;
+
+            const sub = appState.subjects.find(s => s.id === id);
+            if (sub) {
+                sub.title = title;
+                sub.color = color;
+                saveState();
+                renderAll();
+                closeModal('edit-subject-modal');
+                showToast("Subject updated successfully!");
+            }
         }
 
         function handleSaveSession(e) {
@@ -851,7 +1223,7 @@
             saveState();
             renderSchedule();
             closeModal('add-session-modal');
-            showToast("Study block scheduled successfully! Alarm set.");
+            showToast("Study block scheduled!");
         }
 
         function deleteSession(id) {
@@ -865,7 +1237,7 @@
             e.preventDefault();
             const title = document.getElementById('subject-title-input').value.trim();
             const colorRadios = document.getElementsByName('subject-color');
-            let color = '#D46A88';
+            let color = 'var(--color-accent)';
             for (const r of colorRadios) {
                 if (r.checked) color = r.value;
             }
@@ -928,7 +1300,22 @@
             }
         }
 
-        /* TIMER ENGINE & PAUSE/RESUME & BREAK PROTOCOL */
+        function updateWaterGoal(val) {
+            appState.habits.waterGoal = parseInt(val) || 8;
+            if (appState.habits.waterGlasses > appState.habits.waterGoal) {
+                appState.habits.waterGlasses = appState.habits.waterGoal;
+            }
+            saveState();
+            renderWaterTracker();
+            showToast(`Water goal updated to ${val} glasses!`);
+        }
+
+        function updateDefaultTimer(val) {
+            appState.habits.defaultTimerMinutes = parseInt(val) || 30;
+            saveState();
+            showToast(`Default timer updated to ${val} mins!`);
+        }
+
         function launchSessionTimer(sessionId) {
             const ses = appState.sessions.find(s => s.id === sessionId);
             if (ses) {
@@ -942,9 +1329,10 @@
                 saveState();
                 renderSchedule();
             } else {
+                const defMins = appState.habits.defaultTimerMinutes || 30;
                 document.getElementById('timer-subject-title').innerText = 'Standard Deep Study';
-                timerTotalSeconds = 30 * 60;
-                timerRemainingSeconds = 30 * 60;
+                timerTotalSeconds = defMins * 60;
+                timerRemainingSeconds = timerTotalSeconds;
                 currentTimerSessionId = null;
             }
             activeTimerMode = 'study';
@@ -1045,10 +1433,11 @@
                     }
                 }
                 showBreakModal();
-                showToast("Focus session complete! Marked as Finished.");
+                showToast("Focus session complete!");
             } else {
                 showToast("Break concluded. Ready to refocus!");
-                startBreakSession(30, 'Deep Study Block');
+                const defMins = appState.habits.defaultTimerMinutes || 30;
+                startBreakSession(defMins, 'Deep Study Block');
             }
         }
 
@@ -1067,66 +1456,57 @@
                 adjustWaterGlass(1);
                 showToast("Water glass logged (+1)!");
             } else if (actionType === 'nap') {
-                appState.habits.nap = true;
-                saveState();
-                renderHabitCheckboxes();
-                showToast("Power nap habit checked!");
+                const napItem = appState.checkIns.find(c => c.title.toLowerCase().includes('nap'));
+                if (napItem) {
+                    napItem.done = true;
+                    saveState();
+                    renderCheckIns();
+                }
+                showToast("Power nap logged!");
             } else if (actionType === 'stretch') {
-                appState.habits.stretch = true;
-                saveState();
-                renderHabitCheckboxes();
-                showToast("Movement stretch habit checked!");
+                const stretchItem = appState.checkIns.find(c => c.title.toLowerCase().includes('stretch') || c.title.toLowerCase().includes('movement'));
+                if (stretchItem) {
+                    stretchItem.done = true;
+                    saveState();
+                    renderCheckIns();
+                }
+                showToast("Movement logged!");
             }
             dismissBreakModal();
         }
 
-        /* ALARMS & NOTIFICATIONS (Android & iOS Alarm Clock Style) */
         function requestNotificationAndAudioPermission() {
-            // Unlock Mobile Browser Audio Context via User Gesture
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (AudioContext) {
                     globalAudioCtx = new AudioContext();
-                    if (globalAudioCtx.state === 'suspended') {
-                        globalAudioCtx.resume();
-                    }
+                    if (globalAudioCtx.state === 'suspended') globalAudioCtx.resume();
                 }
-            } catch (e) {
-                console.log("Audio unlock exception", e);
-            }
+            } catch (e) { }
 
-            // Request Notification Permission for Phone/OS
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        showToast("Notifications & Alarm Clock Permissions Enabled!");
-                        document.getElementById('bell-icon').style.color = '#D46A88';
+                        showToast("Notifications Enabled!");
                     } else {
-                        showToast("Notification permission denied, but in-app alarm clock is active.");
+                        showToast("In-app alarm active.");
                     }
                 });
             } else {
-                showToast("Alarm clock initialized and ready.");
+                showToast("Alarm clock ready.");
             }
-        }
-
-        function testAudioAlarm() {
-            playAudioAlarm();
-            showToast("Alarm sound test playing.");
         }
 
         function playAudioAlarm() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 const ctx = globalAudioCtx || new AudioContext();
-                if (ctx.state === 'suspended') {
-                    ctx.resume();
-                }
+                if (ctx.state === 'suspended') ctx.resume();
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-                osc.type = 'square'; // Piercing phone alarm sound
+
+                osc.type = 'square';
                 osc.frequency.setValueAtTime(880, ctx.currentTime);
-                setTimeout(() => { if (osc) osc.frequency.setValueAtTime(659.25, ctx.currentTime); }, 250);
 
                 gain.gain.setValueAtTime(0.3, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
@@ -1135,9 +1515,7 @@
                 gain.connect(ctx.destination);
                 osc.start();
                 osc.stop(ctx.currentTime + 1.2);
-            } catch (e) {
-                console.log("AudioContext blocked or unavailable", e);
-            }
+            } catch (e) { }
         }
 
         function startAlarmRingingSequence(sessionId, subName) {
@@ -1145,12 +1523,9 @@
             document.getElementById('alarm-subject-name').innerText = subName;
             document.getElementById('alarm-ringing-modal').classList.remove('hidden');
 
-            // Play initial beep and start a looping alarm ring every 1.8 seconds until dismissed
             playAudioAlarm();
             if (!alarmRingingInterval) {
-                alarmRingingInterval = setInterval(() => {
-                    playAudioAlarm();
-                }, 1800);
+                alarmRingingInterval = setInterval(() => { playAudioAlarm(); }, 1800);
             }
         }
 
@@ -1178,14 +1553,9 @@
                     const sub = appState.subjects.find(s => s.id === ses.subjectId);
                     const subName = sub ? sub.title : 'Study Session';
 
-                    // Trigger Phone OS Push Notification if permitted
                     if ("Notification" in window && Notification.permission === "granted") {
-                        new Notification("Study Alarm Ringing!", {
-                            body: `Time for your scheduled study block: ${subName}!`
-                        });
+                        new Notification("Study Alarm Ringing!", { body: `Time for your study block: ${subName}!` });
                     }
-
-                    // Trigger In-App Phone Alarm Clock Ringing Modal & Sound Loop
                     startAlarmRingingSequence(ses.id, subName);
                 }
             });
@@ -1194,7 +1564,7 @@
         function showToast(message) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = 'bg-charcoal-main text-white text-xs px-4 py-3 rounded-2xl shadow-atelier flex items-center justify-between fade-in pointer-events-auto';
+            toast.className = 'bg-slate-800 text-white text-xs px-4 py-3 rounded-2xl shadow-md flex items-center justify-between fade-in pointer-events-auto';
             toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
