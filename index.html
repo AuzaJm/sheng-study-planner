@@ -176,9 +176,9 @@
                     </div>
                     <div>
                         <div class="flex items-center space-x-1.5">
-                            <span class="text-[9px] font-bold uppercase tracking-[0.2em] app-text-accent">ATELIER ACADEMIA</span>
+                            
                             <span class="text-[9px] app-text-muted">•</span>
-                            <span class="text-[9px] font-semibold app-text-muted tracking-widest uppercase" id="header-date">TODAY</span>
+                            <span class="text-[15px] font-semibold app-text-accent tracking-widest uppercase" id="header-date">TODAY</span>
                         </div>
                         <h1 class="font-serif text-xl font-bold tracking-tight app-text-main leading-tight">Shena's Study Planner</h1>
                     </div>
@@ -893,11 +893,11 @@
 
             if (scheduledSessions.length === 0) {
                 container.innerHTML = `
-                        <div class="text-center py-10 app-card rounded-2xl border app-border-soft">
-                            <p class="text-xs app-text-muted">No upcoming scheduled study blocks.</p>
-                            <button onclick="openModal('add-session-modal')" class="mt-3 app-text-accent text-xs font-semibold underline">Plan your next session</button>
-                        </div>
-                    `;
+                            <div class="text-center py-10 app-card rounded-2xl border app-border-soft">
+                                <p class="text-xs app-text-muted">No upcoming scheduled study blocks.</p>
+                                <button onclick="openModal('add-session-modal')" class="mt-3 app-text-accent text-xs font-semibold underline">Plan your next session</button>
+                            </div>
+                        `;
                 return;
             }
 
@@ -909,24 +909,24 @@
                 const item = document.createElement('div');
                 item.className = 'app-card p-4 rounded-2xl border app-border-soft shadow-sm flex items-center justify-between transition-all';
                 item.innerHTML = `
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
-                            <div>
-                                <h4 class="font-serif text-base font-semibold app-text-main">${sub.title}</h4>
-                                <div class="flex items-center space-x-2 text-[11px] app-text-muted mt-0.5">
-                                    <span>📅 ${dateLabel} at ${ses.time}</span>
-                                    <span>•</span>
-                                    <span>⏳ ${ses.duration}m</span>
-                                    <span>•</span>
-                                    <span class="px-1.5 py-0.5 rounded-md app-bg-soft app-text-main font-medium">${ses.priority}</span>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
+                                <div>
+                                    <h4 class="font-serif text-base font-semibold app-text-main">${sub.title}</h4>
+                                    <div class="flex items-center space-x-2 text-[11px] app-text-muted mt-0.5">
+                                        <span>📅 ${dateLabel} at ${ses.time}</span>
+                                        <span>•</span>
+                                        <span>⏳ ${ses.duration}m</span>
+                                        <span>•</span>
+                                        <span class="px-1.5 py-0.5 rounded-md app-bg-soft app-text-main font-medium">${ses.priority}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-medium transition-all shadow-sm">Start</button>
-                            <button onclick="deleteSession('${ses.id}')" class="p-1.5 app-text-muted hover:text-red-500 transition-all text-sm">✕</button>
-                        </div>
-                    `;
+                            <div class="flex items-center space-x-2">
+                                <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-medium transition-all shadow-sm">Start</button>
+                                <button onclick="deleteSession('${ses.id}')" class="p-1.5 app-text-muted hover:text-red-500 transition-all text-sm">✕</button>
+                            </div>
+                        `;
                 container.appendChild(item);
             });
         }
@@ -947,32 +947,32 @@
                 let tasksHtml = '';
                 sub.tasks.forEach(task => {
                     tasksHtml += `
-                            <div class="flex items-center justify-between py-1.5 border-b app-border-soft/60 last:border-0">
-                                <label class="flex items-center space-x-2.5 cursor-pointer flex-1">
-                                    <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone('${sub.id}', '${task.id}')" class="rounded app-border-soft app-text-accent focus:ring-0 w-4 h-4 cursor-pointer">
-                                    <span class="text-xs ${task.done ? 'line-through app-text-muted' : 'app-text-main'}">${task.text}</span>
-                                </label>
-                                <button onclick="deleteTask('${sub.id}', '${task.id}')" class="text-[10px] app-text-muted hover:text-red-500 px-1">✕</button>
-                            </div>
-                        `;
+                                <div class="flex items-center justify-between py-1.5 border-b app-border-soft/60 last:border-0">
+                                    <label class="flex items-center space-x-2.5 cursor-pointer flex-1">
+                                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone('${sub.id}', '${task.id}')" class="rounded app-border-soft app-text-accent focus:ring-0 w-4 h-4 cursor-pointer">
+                                        <span class="text-xs ${task.done ? 'line-through app-text-muted' : 'app-text-main'}">${task.text}</span>
+                                    </label>
+                                    <button onclick="deleteTask('${sub.id}', '${task.id}')" class="text-[10px] app-text-muted hover:text-red-500 px-1">✕</button>
+                                </div>
+                            `;
                 });
 
                 card.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <span class="w-3 h-3 rounded-full" style="background-color: ${sub.color}"></span>
-                                <h3 class="font-serif font-semibold text-base app-text-main">${sub.title}</h3>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-3 h-3 rounded-full" style="background-color: ${sub.color}"></span>
+                                    <h3 class="font-serif font-semibold text-base app-text-main">${sub.title}</h3>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="promptAddTask('${sub.id}')" class="text-[11px] app-text-accent font-medium hover:underline">+ Task</button>
+                                    <button onclick="openEditSubjectModal('${sub.id}')" class="text-[11px] app-text-muted hover:app-text-accent px-1" title="Edit Subject">✏️</button>
+                                    <button onclick="deleteSubject('${sub.id}')" class="app-text-muted hover:text-red-500 text-xs">✕</button>
+                                </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="promptAddTask('${sub.id}')" class="text-[11px] app-text-accent font-medium hover:underline">+ Task</button>
-                                <button onclick="openEditSubjectModal('${sub.id}')" class="text-[11px] app-text-muted hover:app-text-accent px-1" title="Edit Subject">✏️</button>
-                                <button onclick="deleteSubject('${sub.id}')" class="app-text-muted hover:text-red-500 text-xs">✕</button>
+                            <div class="app-bg rounded-xl p-3 space-y-1">
+                                ${tasksHtml || '<p class="text-[11px] app-text-muted text-center py-1">No active recall tasks added yet.</p>'}
                             </div>
-                        </div>
-                        <div class="app-bg rounded-xl p-3 space-y-1">
-                            ${tasksHtml || '<p class="text-[11px] app-text-muted text-center py-1">No active recall tasks added yet.</p>'}
-                        </div>
-                    `;
+                        `;
                 container.appendChild(card);
             });
         }
@@ -1019,19 +1019,19 @@
                 const isDone = ci.done;
                 card.className = `cursor-pointer p-4 rounded-2xl app-card border transition-all duration-200 flex flex-col justify-between space-y-3 ${isDone ? 'border-emerald-400 app-bg-light/40' : 'app-border-soft hover:border-emerald-400'}`;
                 card.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl">${ci.emoji}</span>
-                            <div class="flex items-center space-x-1.5">
-                                <button onclick="event.stopPropagation(); openEditCheckInModal('${ci.id}')" class="text-[10px] app-text-muted hover:app-text-accent" title="Edit">✏️</button>
-                                <button onclick="event.stopPropagation(); deleteCheckIn('${ci.id}')" class="text-[10px] app-text-muted hover:text-red-500" title="Delete">✕</button>
-                                <span class="w-5 h-5 rounded-full border app-border-soft flex items-center justify-center text-[10px] ${isDone ? 'app-bg-accent text-white border-transparent' : ''}">${isDone ? '✓' : ''}</span>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl">${ci.emoji}</span>
+                                <div class="flex items-center space-x-1.5">
+                                    <button onclick="event.stopPropagation(); openEditCheckInModal('${ci.id}')" class="text-[10px] app-text-muted hover:app-text-accent" title="Edit">✏️</button>
+                                    <button onclick="event.stopPropagation(); deleteCheckIn('${ci.id}')" class="text-[10px] app-text-muted hover:text-red-500" title="Delete">✕</button>
+                                    <span class="w-5 h-5 rounded-full border app-border-soft flex items-center justify-center text-[10px] ${isDone ? 'app-bg-accent text-white border-transparent' : ''}">${isDone ? '✓' : ''}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div onclick="toggleCheckIn('${ci.id}')">
-                            <p class="text-xs font-semibold app-text-main">${ci.title}</p>
-                            <p class="text-[10px] app-text-muted">${ci.desc}</p>
-                        </div>
-                    `;
+                            <div onclick="toggleCheckIn('${ci.id}')">
+                                <p class="text-xs font-semibold app-text-main">${ci.title}</p>
+                                <p class="text-[10px] app-text-muted">${ci.desc}</p>
+                            </div>
+                        `;
                 grid.appendChild(card);
             });
         }
@@ -1133,10 +1133,10 @@
 
             if (filteredSessions.length === 0) {
                 container.innerHTML = `
-                        <div class="text-center py-10 app-card rounded-2xl border app-border-soft">
-                            <p class="text-xs app-text-muted">No sessions found in "${currentHistoryFilter.toUpperCase()}" status.</p>
-                        </div>
-                    `;
+                            <div class="text-center py-10 app-card rounded-2xl border app-border-soft">
+                                <p class="text-xs app-text-muted">No sessions found in "${currentHistoryFilter.toUpperCase()}" status.</p>
+                            </div>
+                        `;
                 return;
             }
 
@@ -1147,21 +1147,21 @@
                 const item = document.createElement('div');
                 item.className = 'app-card p-4 rounded-2xl border app-border-soft shadow-sm flex items-center justify-between transition-all';
                 item.innerHTML = `
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
-                            <div>
-                                <h4 class="font-serif text-base font-semibold app-text-main">${sub.title}</h4>
-                                <div class="flex items-center space-x-2 text-[11px] app-text-muted mt-0.5">
-                                    <span class="uppercase tracking-wide font-medium app-text-accent">[${ses.status}]</span>
-                                    <span class="text-[10px]">•</span>
-                                    <span>Remaining: ${remainingMins}m</span>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2.5 h-10 rounded-full mt-0.5" style="background-color: ${sub.color}"></div>
+                                <div>
+                                    <h4 class="font-serif text-base font-semibold app-text-main">${sub.title}</h4>
+                                    <div class="flex items-center space-x-2 text-[11px] app-text-muted mt-0.5">
+                                        <span class="uppercase tracking-wide font-medium app-text-accent">[${ses.status}]</span>
+                                        <span class="text-[10px]">•</span>
+                                        <span>Remaining: ${remainingMins}m</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-medium transition-all shadow-sm">Resume</button>
-                        </div>
-                    `;
+                            <div class="flex items-center space-x-2">
+                                <button onclick="launchSessionTimer('${ses.id}')" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-medium transition-all shadow-sm">Resume</button>
+                            </div>
+                        `;
                 container.appendChild(item);
             });
         }
