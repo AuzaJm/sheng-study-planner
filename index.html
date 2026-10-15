@@ -83,7 +83,6 @@
             border-radius: 4px;
         }
 
-        /* Strict Tab Active Rules */
         .nav-btn {
             color: var(--color-muted);
             border-top: 2px solid transparent;
@@ -165,11 +164,10 @@
     <!-- Mobile Frame Shell -->
     <div class="w-full max-w-[430px] min-h-screen app-bg flex flex-col relative shadow-2xl border-x app-border-soft transition-colors duration-300" id="app-shell">
 
-        <!-- Header (Professional Academic Design) -->
+        <!-- Header -->
         <header class="pt-6 pb-4 px-5 app-bg/95 backdrop-blur-md sticky top-0 z-30 border-b app-border-soft transition-colors duration-300">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center space-x-2">
-                    <!-- Vector Academic Emblem Logo -->
                     <div class="w-9 h-9 rounded-2xl app-bg-light border app-border-soft flex items-center justify-center shadow-sm">
                         <svg class="w-5 h-5 app-text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
@@ -178,16 +176,15 @@
                     </div>
                     <div>
                         <div class="flex items-center space-x-1.5">
+                            <span class="text-[9px] font-bold uppercase tracking-[0.2em] app-text-accent">ATELIER ACADEMIA</span>
                             <span class="text-[9px] app-text-muted">•</span>
-                            <span class="text-[15px] font-semibold app-text-accent tracking-widest uppercase" id="header-date">TODAY</span>
+                            <span class="text-[9px] font-semibold app-text-muted tracking-widest uppercase" id="header-date">TODAY</span>
                         </div>
                         <h1 class="font-serif text-xl font-bold tracking-tight app-text-main leading-tight">Shena's Study Planner</h1>
                     </div>
                 </div>
 
-                <!-- Control Buttons & Streak -->
                 <div class="flex items-center space-x-1.5">
-                    <!-- Streak Badge Counter -->
                     <div onclick="showStreakInfo()" class="flex items-center space-x-1 px-2.5 py-1 rounded-full app-bg-light border app-border-soft cursor-pointer shadow-sm hover:scale-105 transition-transform" title="Your Daily Study Streak">
                         <span class="text-xs streak-flame">🔥</span>
                         <span id="header-streak-count" class="text-xs font-bold app-text-accent">1</span>
@@ -215,10 +212,22 @@
         <main class="flex-1 px-5 pt-4 pb-24 overflow-y-auto" id="app-content">
 
             <!-- TAB 1: SCHEDULE & PLANNER -->
-            <section id="tab-schedule" class="tab-content fade-in space-y-6">
+            <section id="tab-schedule" class="tab-content fade-in space-y-5">
                 <div class="app-bg-soft p-4 rounded-2xl border app-border-soft text-center shadow-sm transition-colors duration-300">
                     <p class="font-serif italic app-text-main text-sm">"Grace in focus, precision in endeavor."</p>
                 </div>
+
+                <!-- One-Tap iOS System Alarm Shortcut Launcher Button -->
+                <button onclick="triggerIOSAlarmShortcut()" class="w-full app-card p-3.5 rounded-2xl border app-border-soft hover:border-emerald-400 transition-all shadow-sm flex items-center justify-between group">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xl p-2 app-bg-light rounded-xl">⏰</span>
+                        <div class="text-left">
+                            <h4 class="text-xs font-semibold app-text-main">Set iPhone System Alarm</h4>
+                            <p class="text-[10px] app-text-muted">Launch your "Add Alarm" iOS shortcut</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-semibold app-text-accent group-hover:translate-x-0.5 transition-transform">Run ➔</span>
+                </button>
 
                 <!-- Exam Countdown Widget -->
                 <div id="exam-countdown-card" class="app-card p-4 rounded-3xl border app-border-soft shadow-sm flex items-center justify-between">
@@ -373,9 +382,7 @@
                         <h3 class="font-serif text-lg font-semibold app-text-main">Mind & Body Check-in</h3>
                         <button onclick="openAddCheckInModal()" class="text-xs app-text-accent font-medium hover:underline">+ Add Activity</button>
                     </div>
-                    <div class="grid grid-cols-2 gap-3" id="wellness-grid">
-                        <!-- Dynamic Check-Ins rendered via JS -->
-                    </div>
+                    <div class="grid grid-cols-2 gap-3" id="wellness-grid"></div>
                 </div>
             </section>
 
@@ -422,57 +429,6 @@
             </div>
         </div>
 
-        <!-- MODAL: ADD/EDIT CHECK-IN ACTIVITY -->
-        <div id="checkin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
-            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
-                <div class="flex items-center justify-between border-b app-border-soft pb-3">
-                    <h3 id="checkin-modal-title" class="font-serif text-lg font-semibold app-text-main">Add Mind & Body Activity</h3>
-                    <button onclick="closeModal('checkin-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
-                </div>
-                <form onsubmit="handleSaveCheckIn(event)" class="space-y-3 text-xs">
-                    <input type="hidden" id="checkin-edit-id">
-                    <div>
-                        <label class="block font-medium app-text-muted mb-1">Emoji Icon</label>
-                        <input type="text" id="checkin-emoji" value="🌿" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 text-center text-xl app-text-main focus:outline-none focus:border-emerald-400">
-                    </div>
-                    <div>
-                        <label class="block font-medium app-text-muted mb-1">Activity Title</label>
-                        <input type="text" id="checkin-title" placeholder="e.g. Deep Breathing" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
-                    </div>
-                    <div>
-                        <label class="block font-medium app-text-muted mb-1">Short Description</label>
-                        <input type="text" id="checkin-desc" placeholder="e.g. 5 minutes box breathing" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
-                    </div>
-                    <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
-                        Save Activity
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- MODAL: EXAM TARGET CONFIG -->
-        <div id="exam-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
-            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
-                <div class="flex items-center justify-between border-b app-border-soft pb-3">
-                    <h3 class="font-serif text-lg font-semibold app-text-main">Set Exam Countdown</h3>
-                    <button onclick="closeModal('exam-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
-                </div>
-                <form onsubmit="handleSaveExam(event)" class="space-y-3 text-xs">
-                    <div>
-                        <label class="block font-medium app-text-muted mb-1">Exam Name / Title</label>
-                        <input type="text" id="exam-name-input" placeholder="e.g. Finals Week, Board Exam" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
-                    </div>
-                    <div>
-                        <label class="block font-medium app-text-muted mb-1">Target Date</label>
-                        <input type="date" id="exam-date-input" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
-                    </div>
-                    <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
-                        Start Countdown
-                    </button>
-                </form>
-            </div>
-        </div>
-
         <!-- MODAL: ADD SESSION -->
         <div id="add-session-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
             <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
@@ -509,8 +465,17 @@
                             </select>
                         </div>
                     </div>
+
+                    <!-- Shortcut Launcher Checkbox Option -->
+                    <div class="pt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="trigger-alarm-shortcut-checkbox" class="rounded app-border-soft text-emerald-500 focus:ring-0 w-4 h-4 cursor-pointer" checked>
+                            <span class="text-xs app-text-main">Open "Add Alarm" iPhone Shortcut after saving</span>
+                        </label>
+                    </div>
+
                     <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
-                        Confirm Session & Alarm
+                        Confirm Session
                     </button>
                 </form>
             </div>
@@ -575,6 +540,57 @@
             </div>
         </div>
 
+        <!-- MODAL: ADD/EDIT CHECK-IN ACTIVITY -->
+        <div id="checkin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 id="checkin-modal-title" class="font-serif text-lg font-semibold app-text-main">Add Mind & Body Activity</h3>
+                    <button onclick="closeModal('checkin-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
+                </div>
+                <form onsubmit="handleSaveCheckIn(event)" class="space-y-3 text-xs">
+                    <input type="hidden" id="checkin-edit-id">
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Emoji Icon</label>
+                        <input type="text" id="checkin-emoji" value="🌿" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 text-center text-xl app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Activity Title</label>
+                        <input type="text" id="checkin-title" placeholder="e.g. Deep Breathing" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Short Description</label>
+                        <input type="text" id="checkin-desc" placeholder="e.g. 5 minutes box breathing" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
+                        Save Activity
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: EXAM TARGET CONFIG -->
+        <div id="exam-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+            <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between border-b app-border-soft pb-3">
+                    <h3 class="font-serif text-lg font-semibold app-text-main">Set Exam Countdown</h3>
+                    <button onclick="closeModal('exam-modal')" class="app-text-muted hover:app-text-main text-xl">✕</button>
+                </div>
+                <form onsubmit="handleSaveExam(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Exam Name / Title</label>
+                        <input type="text" id="exam-name-input" placeholder="e.g. Finals Week, Board Exam" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block font-medium app-text-muted mb-1">Target Date</label>
+                        <input type="date" id="exam-date-input" required class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <button type="submit" class="w-full app-bg-accent text-white py-3 rounded-2xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 mt-2 shadow-sm">
+                        Start Countdown
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <!-- MODAL: SETTINGS & PERSONALIZATION -->
         <div id="settings-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden">
             <div class="app-card w-full max-w-[430px] rounded-t-3xl p-6 border-t app-border-soft shadow-2xl space-y-4 fade-in max-h-[85vh] overflow-y-auto">
@@ -584,7 +600,6 @@
                 </div>
 
                 <div class="space-y-4 text-xs">
-                    <!-- Theme Selector -->
                     <div>
                         <label class="block font-medium app-text-muted mb-2">Pastel Theme Vibe</label>
                         <div class="grid grid-cols-5 gap-2 text-center">
@@ -611,7 +626,6 @@
                         </div>
                     </div>
 
-                    <!-- Water Goal Customization -->
                     <div>
                         <label class="block font-medium app-text-muted mb-1">Daily Water Goal (Glasses)</label>
                         <select id="setting-water-goal" onchange="updateWaterGoal(this.value)" class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
@@ -623,7 +637,6 @@
                         </select>
                     </div>
 
-                    <!-- Default Timer Duration -->
                     <div>
                         <label class="block font-medium app-text-muted mb-1">Default Study Duration</label>
                         <select id="setting-default-timer" onchange="updateDefaultTimer(this.value)" class="w-full app-bg border app-border-soft rounded-xl p-2.5 app-text-main focus:outline-none focus:border-emerald-400">
@@ -654,7 +667,7 @@
             sky: { cream: '#F2F6F9', card: '#FFFFFF', accent: '#5B85AA', hover: '#497193', light: '#D6E4F0', nude: '#BDD4E6', soft: '#E4EFEF', charcoal: '#232A30', muted: '#70808F', border: '#BCCFD9' }
         };
 
-        const STORAGE_KEY = 'SHENA_STUDY_STATE_V8';
+        const STORAGE_KEY = 'SHENA_STUDY_STATE_V9';
 
         let appState = {
             theme: 'rose',
@@ -703,6 +716,12 @@
             initDefaultInputs();
             setInterval(checkUpcomingAlarmsInterval, 10000);
         });
+
+        /* TRIGGER iOS SHORTCUT URL SCHEME */
+        function triggerIOSAlarmShortcut() {
+            // Uses Apple's shortcuts:// scheme to launch the shortcut named "Add Alarm"
+            window.location.href = "shortcuts://run-shortcut?name=Add%20Alarm";
+        }
 
         function loadStateFromStorage() {
             const saved = localStorage.getItem(STORAGE_KEY);
@@ -842,7 +861,6 @@
             saveState();
         }
 
-        /* REFACTORED TAB SWITCHER (EXPLICIT CLEANUP FIX) */
         function switchTab(tabKey) {
             const tabs = ['schedule', 'timer', 'subjects', 'history', 'habits'];
             tabs.forEach(tk => {
@@ -1206,6 +1224,7 @@
             const time = document.getElementById('session-time').value;
             const duration = parseInt(document.getElementById('session-duration').value) || 30;
             const priority = document.getElementById('session-priority').value;
+            const triggerShortcut = document.getElementById('trigger-alarm-shortcut-checkbox').checked;
 
             const newSes = {
                 id: 'ses_' + Date.now(),
@@ -1224,6 +1243,13 @@
             renderSchedule();
             closeModal('add-session-modal');
             showToast("Study block scheduled!");
+
+            // If checked, launch the iOS "Add Alarm" Shortcut directly!
+            if (triggerShortcut) {
+                setTimeout(() => {
+                    triggerIOSAlarmShortcut();
+                }, 400);
+            }
         }
 
         function deleteSession(id) {
